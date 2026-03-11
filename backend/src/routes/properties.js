@@ -1,9 +1,9 @@
 import { Router } from 'express';
 const router = Router();
-import { getAllProperties, getFeaturedProperties, getPropertyById, getSimilarProperties, createProperty, updateProperty, deleteProperty, uploadImages, deleteImage } from '../controllers/propertyController';
-import { authenticateAdmin } from '../middleware/auth';
-import { validateProperty } from '../middleware/validation';
-import { uploadLimiter } from '../middleware/rateLimiter';
+import { getAllProperties, getFeaturedProperties, getPropertyById, getSimilarProperties, createProperty, updateProperty, deleteProperty, uploadImages, deleteImage } from '../controllers/propertyController.js';
+import { authenticateAdmin } from '../middleware/auth.js';
+import { validateProperty, validatePropertyUpdate } from '../middleware/validation.js';
+import { uploadLimiter } from '../middleware/rateLimiter.js';
 import multer, { memoryStorage } from 'multer';
 
 const upload = multer({
@@ -70,7 +70,7 @@ router.post('/',
 
 router.put('/:id',
   authenticateAdmin,
-  validateProperty,
+  validatePropertyUpdate,  // ← allows partial updates
   updateProperty
 );
 

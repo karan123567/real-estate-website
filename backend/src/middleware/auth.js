@@ -1,4 +1,4 @@
-import { verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 // ============================================================
 // Middleware: Authenticate Admin
@@ -17,7 +17,7 @@ const authenticateAdmin = (req, res, next) => {
     }
 
     // ✅ 2. Verify JWT signature and decode payload
-    const decoded = verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // ✅ 3. CRITICAL: Check role in payload
     if (decoded.role !== 'admin') {
@@ -102,7 +102,7 @@ const optionalAuth = (req, res, next) => {
       return next();
     }
 
-    const decoded = verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Attach user if valid
     req.user = {
@@ -136,7 +136,7 @@ const authenticateAny = (req, res, next) => {
       });
     }
 
-    const decoded = verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // No role check here - accepts any authenticated user
     req.user = {
@@ -159,7 +159,7 @@ const authenticateAny = (req, res, next) => {
 };
 
 
-export default { 
+export { 
   authenticateAdmin,
   optionalAuth,
   authenticateAny

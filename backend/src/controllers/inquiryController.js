@@ -1,5 +1,5 @@
-import { query } from '../models/db';
-import { sendInquiryEmails } from '../utils/email';
+import { query } from '../models/db.js';
+import { sendInquiryEmails } from '../utils/email.js';
 
 // ============================================================
 // POST /api/inquiries - Submit contact form / inquiry
@@ -107,6 +107,63 @@ const submitInquiry = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
+const getAllInquiries = async (req, res, next) => {
+  try {
+    const page   = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit  = Math.min(50, Math.max(1, parseInt(req.query.limit) || 20));
+    const offset = (page - 1) * limit;
+    const status = req.query.status || null;
+
+    const conditions = [];
+    const params = [];
+    let paramIndex = 1;
+
+    if (status) {
+      conditions.push(`i.status = $${paramIndex++}`);
+      params.push(status);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const [countResult, dataResult] = await Promise.all([
+      query(`SELECT COUNT(*) as count FROM inquiries i ${whereClause}`, params),
+      query(`
+        SELECT i.*, p.title as property_title, p.city as property_city
+        FROM inquiries i
+        LEFT JOIN properties p ON i.property_id = p.id
+        ${whereClause}
+        ORDER BY i.created_at DESC
+        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+      `, [...params, limit, offset])
+    ]);
+
+    const total = parseInt(countResult.rows[0].count) || 0;
+
+    res.json({
+      success: true,
+      inquiries: dataResult.rows || [],
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalInquiries: total,
+        perPage: limit,
+        hasNextPage: page < Math.ceil(total / limit),
+        hasPreviousPage: page > 1
+      }
+    });
+
+  } catch (error) {
+    console.error('getAllInquiries error:', error);
+    next(error);
+  }
+};
+
+
+
+
 
 
 // ============================================================
@@ -241,10 +298,17 @@ const getInquiryStats = async (req, res, next) => {
   }
 };
 
-
+export {
+  submitInquiry,
+  getInquiryById,
+  deleteInquiry,
+  getInquiryStats,
+  getAllInquiries
+};
 export default {
   submitInquiry,
   getInquiryById,
   deleteInquiry,
-  getInquiryStats
+  getInquiryStats,
+  getAllInquiries
 };

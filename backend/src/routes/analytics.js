@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const router = Router();
-import { trackEvent, startSession, endSession, getOverview, getVisitors, getPropertyAnalytics } from '../controllers/analyticsController';
-import { authenticateAdmin } from '../middleware/auth';
+import { trackEvent, startSession, endSession, getOverview, getVisitors, getPropertyAnalytics } from '../controllers/analyticsController.js';
+import { authenticateAdmin } from '../middleware/auth.js';
 
 // Public - track events (called from frontend)
 router.post('/track', trackEvent);

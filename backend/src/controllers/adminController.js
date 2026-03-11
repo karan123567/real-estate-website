@@ -1,6 +1,6 @@
 import { compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
-import { query } from '../models/db';
+import jwt from 'jsonwebtoken';
+import { query } from '../models/db.js';
 
 const SALT_ROUNDS = 12;
 
@@ -40,7 +40,7 @@ const login = async (req, res, next) => {
     }
 
     // 4. Generate JWT token
-    const token = sign(
+    const token = jwt.sign(
       { 
         id: admin.id, 
         email: admin.email, 
@@ -426,6 +426,15 @@ const getAnalytics = async (req, res, next) => {
 // ============================================================
 // EXPORTS
 // ============================================================
+export { 
+  login, 
+  logout, 
+  getMe, 
+  getDashboard, 
+  getInquiries, 
+  updateInquiryStatus, 
+  getAnalytics 
+};
 export default { 
   login, 
   logout, 

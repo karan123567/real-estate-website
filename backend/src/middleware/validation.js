@@ -1,4 +1,5 @@
-import { maxLength, minLength, z } from  'zod';
+
+import { z } from 'zod'; // ✅ FIX #2: Removed invalid `minLength` and `maxLength` imports — they are not Zod exports
 import sanitizeHtml from 'sanitize-html';
 
 
@@ -30,7 +31,7 @@ const sanitizeConfig = {
                     attribs: {
                         ...attribs,
                         target: '_blank',
-                        rel: 'nooperner noreferrer'
+                        rel: 'noopener noreferrer' // ✅ FIX #3: Was 'nooperner noreferrer' — typo defeated tab-napping protection
                     }
                 };
             }
@@ -75,9 +76,9 @@ const urlString = z.string()
  * Safe string validator (Sanitized automatically)
  */
 
-const safeString = (minLength = 1, maxLength = 255) => z.string()
-.min(minLength, ` Must be at least ${minLength} characters`)
-.max(maxLength, ` Must be at most ${maxLength} characters`)
+const safeString = (minLen = 1, maxLen = 255) => z.string()
+.min(minLen, ` Must be at least ${minLen} characters`)
+.max(maxLen, ` Must be at most ${maxLen} characters`)
 .transform(val => sanitizeHtml(val, sanitizeConfig.plainText).trim());
 
 /**
@@ -167,7 +168,7 @@ export const propertySchema = z.object({
     // Property details
     bedrooms: z.number()
     .int('Bedrooms must be a whole number')
-    .min(0, 'Bedrooms connot be negative')
+    .min(0, 'Bedrooms cannot be negative')
     .max(50, 'Bedrooms seems unrealistic')
     .optional(),
 
@@ -210,7 +211,7 @@ export const propertySchema = z.object({
   .max(50, 'Maximum 50 amenities allowed')
   .default([])
   .transform(amenities => 
-    amenities.map(a => sanitizeHtml(a, sanitizeConfig.plainText).trim())
+    amenities?.map(a => sanitizeHtml(a, sanitizeConfig.plainText).trim())
   ),
   
   // Optional fields
@@ -414,12 +415,122 @@ export const propertySearchSchema = z.object({
 
 
 // ============================================================
-// UPDATE SCHEMAS (Partial versions for PATCH requests)
+// UPDATE SCHEMAS (Partial versions for PUT/PATCH requests)
 // ============================================================
 
-export const propertyUpdateSchema = propertySchema.partial();
-export const inquiryUpdateSchema = inquirySchema.partial();
+export const propertyUpdateSchema = z.object({
+  // Basic information
+  title: safeString(5, 255).optional(),
+  description: z.string()
+    .min(20, 'Description must be at least 20 characters')
+    .max(5000, 'Description must be at most 5000 characters')
+    .transform(val => sanitizeHtml(val, sanitizeConfig.richText))
+    .optional(),
 
+  propertyType: z.enum(
+    ['apartment', 'house', 'villa', 'condo', 'townhouse', 'land', 'commercial'],
+    {errorMap:() => ({message: 'Invalid property type'})}
+  ).optional(),
+  
+  listingType: z.enum(
+    ['sale', 'rent'],
+    { errorMap: () => ({message: 'Listing type must be "sale" or "rent"'})}
+  ).optional(),
+
+  // Pricing
+  price: priceValidator.optional(),
+
+  // Location
+  address: safeString(10, 255).optional(),
+  city: safeString(2, 100).optional(),
+  state: safeString(2, 100).optional(),
+  zipCode: z.string()
+    .regex(/^[\w\s\-]{3,10}$/, 'Invalid ZIP code')
+    .optional()
+    .or(z.literal('')),
+  country: safeString(2, 100).optional(),
+
+  // Coordinates
+  latitude: latitude.optional(),
+  longitude: longitude.optional(),
+
+  // Property details
+  bedrooms: z.number()
+    .int('Bedrooms must be a whole number')
+    .min(0, 'Bedrooms cannot be negative')
+    .max(50, 'Bedrooms seems unrealistic')
+    .optional(),
+
+  bathrooms: z.number()
+    .int('Bathrooms must be a whole number')
+    .min(0, 'Bathrooms cannot be negative')
+    .max(50,'Bathrooms seems unrealistic')
+    .optional(),
+
+  areaSqft: z.number()
+    .positive('Area must be positive')
+    .max(1000000, 'Area seems unrealistic')
+    .optional(),
+
+  yearBuilt: yearValidator.optional(),
+
+  // Status
+  status: z.enum(
+    ['available', 'pending', 'sold', 'rented', 'off-market'],
+    { errorMap: () => ({ message: 'Invalid status' }) }
+  ).optional(),
+
+  featured: z.boolean().optional(),
+
+  // Images
+  images: z.array(urlString)
+    .min(1, 'At least 1 image is required')
+    .max(20, 'Maximum 20 images allowed')
+    .refine(
+      (images) => new Set(images).size === images.length,
+      'Duplicate image URLs are not allowed'
+    )
+    .optional(),
+
+  // ✅ FIX #1 (THE CRASH): Use optional chaining `?.map()` instead of a ternary.
+  // When `amenities` is absent from the request body, Zod passes `undefined` to
+  // the transform callback — the ternary guard was unreliable across Zod v3 versions.
+  // Optional chaining is atomic and guaranteed safe.
+  amenities: z.array(
+    z.string()
+      .min(2, 'Amenity name too short')
+      .max(100, 'Amenity name too long')
+  )
+  .max(50, 'Maximum 50 amenities allowed')
+  .optional()
+  .transform(amenities => amenities?.map(a => sanitizeHtml(a, sanitizeConfig.plainText).trim())),
+
+  // Optional fields
+  virtualTourUrl: urlString.optional(),
+  videoUrl: urlString.optional(),
+  agentId: z.string().uuid('Invalid agent ID').optional(),
+});
+
+// inquiryUpdateSchema - manually created to be safe with Zod v4
+export const inquiryUpdateSchema = z.object({
+  name: personName.optional(),
+  email: z.string()
+    .email('Invalid email address')
+    .max(255, 'Email too long')
+    .toLowerCase()
+    .trim()
+    .optional(),
+  phone: phoneNumber.optional(),
+  message: z.string()
+    .min(10, 'Message must be at least 10 characters')
+    .max(1000, 'Message must be at most 1000 characters')
+    .transform(val => sanitizeHtml(val, sanitizeConfig.basicFormat))
+    .optional(),
+  propertyId: z.string().uuid('Invalid property ID').optional(),
+  preferredContact: z.enum(['email', 'phone', 'any']).optional(),
+  bestTimeToContact: z.string().max(100).optional(),
+  website: z.string().max(0, 'Bot detected').optional().default(''),
+});
 
 // ============================================================
 // VALIDATION MIDDLEWARE FACTORY
@@ -433,10 +544,11 @@ export const inquiryUpdateSchema = inquirySchema.partial();
  * @returns {Function} Express middleware
  */
 export const validate = (schema, options = {}) => {
+  // ✅ FIX #4 & #5: Removed `abortEarly` and `stripUnknown` — both were accepted
+  // but never actually applied to Zod (Zod reports all errors by default and
+  // strips unknown keys by default). Keeping dead options causes confusion.
   const {
     source = 'body',  // 'body', 'query', 'params'
-    stripUnknown = true,
-    abortEarly = false
   } = options;
   
   return async (req, res, next) => {
@@ -444,7 +556,7 @@ export const validate = (schema, options = {}) => {
       // Get data from specified source
       const dataToValidate = req[source];
       
-      // Parse and validate
+      // Parse and validate (Zod strips unknown keys and returns all errors by default)
       const validated = await schema.parseAsync(dataToValidate);
       
       // Replace original data with validated & sanitized data
@@ -460,12 +572,13 @@ export const validate = (schema, options = {}) => {
     } catch (error) {
       // Zod validation error
       if (error.name === 'ZodError') {
-        const formattedErrors = error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-          code: err.code,
-          ...(isDevelopment && { received: err.received })
-        }));
+  const issues = error.issues ?? error.errors ?? [];  // v4 uses .issues, v3 uses .errors
+  const formattedErrors = issues.map(err => ({
+    field: err.path.join('.'),
+    message: err.message,
+    code: err.code,
+    ...(isDevelopment && { received: err.received })
+  }));
         
         return res.status(400).json({
           error: 'Validation failed',

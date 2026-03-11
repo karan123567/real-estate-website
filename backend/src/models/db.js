@@ -163,4 +163,5 @@ const transaction = async (callback) => {
 };
 
 
-export default {query, getClient, transaction, pool};
+export { query, getClient, transaction, pool };
+export default { query, getClient, transaction, pool };

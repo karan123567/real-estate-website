@@ -1,19 +1,19 @@
-require('dotenv').config();
+import 'dotenv/config';
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';  // ← ADD THIS
-import { setupSwagger } from './config/swagger';
+import { setupSwagger } from './config/swagger.js';
 
 // Import routes
-import propertyRoutes from './routes/properties';
-import inquiryRoutes from './routes/inquiries';
-import adminRoutes from './routes/admin';
-import analyticsRoutes from './routes/analytics';
+import propertyRoutes from './routes/properties.js';
+import inquiryRoutes from './routes/inquiries.js';
+import adminRoutes from './routes/admin.js';
+import analyticsRoutes from './routes/analytics.js';
 
 // Import middleware
-import { errorHandler } from './middleware/errorHandler';
-import { apiLimiter } from './middleware/rateLimiter';
+import { errorHandler } from './middleware/errorHandler.js';
+import { apiLimiter } from './middleware/rateLimiter.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -51,7 +51,9 @@ app.use(cors({
 }));
 
 // Handle preflight requests explicitly
-app.options('*', cors());
+// app.options('*', cors());
+// Enable CORS preflight for all routes
+app.use(cors());
 
 // ─── Cookie Parser (MUST be before routes) ─────────────────
 app.use(cookieParser());  // ← Parse cookies from req.cookies
@@ -95,7 +97,7 @@ app.use('/api/analytics', analyticsRoutes);
 setupSwagger(app);
 
 // ─── 404 Handler ──────────────────────────────────────────
-app.use('*', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     error: 'Route not found',
     path: req.originalUrl,

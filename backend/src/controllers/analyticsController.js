@@ -1,4 +1,4 @@
-import { query } from '../models/db';
+import { query } from '../models/db.js';
 
 // ============================================================
 // POST /api/analytics/session/start
@@ -499,6 +499,15 @@ const getTrafficSources = async (req, res, next) => {
   }
 };
 
+export {
+  startSession,
+  endSession,
+  trackEvent,
+  getOverview,
+  getVisitors,
+  getPropertyAnalytics,
+  getTrafficSources
+};
 
 export default {
   startSession,

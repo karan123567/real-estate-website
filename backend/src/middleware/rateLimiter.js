@@ -1,4 +1,5 @@
-import reteLimit, { rateLimit } from 'express-rate-limit';
+
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 
 // ============================================================
 // CONFIGURATION
@@ -21,11 +22,11 @@ const createStore = () => {
 
 // Skip rate limiting in development for localhost
 const skipLocalhost = (req) => {
-    if (process.env.NODE_ENV === 'development') {
-        const ip = req.ip || req.connection.remoteAddress;
-        return ip === '127.0.0.1' || ip === '::1' || ip === 'localhost';
-    }
-    return false;
+  if (process.env.NODE_ENV === 'development') {
+    const ip = ipKeyGenerator(req); // ✅ Use helper instead of req.ip
+    return ip === '127.0.0.1' || ip === '::1' || ip === 'localhost';
+  }
+  return false;
 };
 
 // Custom handler for rate limit exceeded
@@ -68,8 +69,9 @@ export const apiLimiter = rateLimit({
   skip: skipLocalhost,
   store: createStore(),
   keyGenerator: (req) => {
-    return req.user?.id || req.ip;
-  },
+  if (req.user?.id) return `api:user:${req.user.id}`;
+  return `api:ip:${ipKeyGenerator(req)}`;
+},
 
   handler: createLimitHandler(
     'Too many API requests from this IP , please try again after 15 minutes',
@@ -104,10 +106,10 @@ export const contactFormLimiter = rateLimit({
   store: createStore(),
 
   keyGenerator: (req) => {
-    const ip = req.ip;
-    const email = req.body.email || '';
-    return `contact:${ip}:$(email)`;
-  },
+  const ip = ipKeyGenerator(req); // ✅ Use helper for IPv6 support
+  const email = req.body.email || '';
+  return `contact:${ip}:${email}`;
+},
 
   handler: createLimitHandler(
     'You have submitted too many inquiries. Our team will respond to you previous message soon. Please wait 1 hour before submitting again.',
@@ -144,7 +146,7 @@ export const loginLimiter = rateLimit({
   store: createStore(),
 
   keyGenerator: (req) => {
-    const ip = req.ip;
+    const ip = ipKeyGenerator(req);
     const email = req.body?.email || 'unknown';
     return `login:$(ip):${email}`;
   },
@@ -154,12 +156,13 @@ export const loginLimiter = rateLimit({
     15
   ),
   skip: (req) => {
-    if (skipLocalhost(req)) return true;
+  if (skipLocalhost(req)) return true;
 
-    const whitelistedIPs = process.env.WHITE_IPS?.split(',') || [];
-    if (whitelistedIPs.includes(req.ip)) return true;
-    return false;
-  }
+  const whitelistedIPs = process.env.WHITE_IPS?.split(',') || [];
+  const ip = ipKeyGenerator(req); // ✅ Use helper
+  if (whitelistedIPs.includes(ip)) return true;
+  return false;
+}
 });
 
 
@@ -190,9 +193,9 @@ export const uploadLimiter = rateLimit({
   store: createStore(),
 
   keyGenerator: (req) => {
-    return req.user?.id || req.ip;
-  },
-
+  if (req.user?.id) return `upload:user:${req.user.id}`;
+  return `upload:ip:${ipKeyGenerator(req)}`; // ✅ Use helper
+},
   handler: createLimitHandler(
     'You have reached the maximum number of uplads for this hour. Please wait before uploading more files.',
     60
@@ -216,9 +219,10 @@ export const dynamicLimiter = (limits = {}) => {
       return limits[role] || limits.guest || 50;
     },
 
-    keyGenerator: (req) => {
-      return req.user?.id || req.ip;
-    },
+   keyGenerator: (req) => {
+  if (req.user?.id) return `dynamic:user:${req.user.id}`;
+  return `dynamic:ip:${ipKeyGenerator(req)}`; // ✅ Use helper
+},
 
     standardHeaders: true,
     legacyHeaders: false,
@@ -254,7 +258,7 @@ export const passwordResetLimiter = rateLimit({
   store: createStore(),
 
   keyGenerator: (req) => {
-    const ip = req.ip;
+    const ip = ipKeyGenerator(req);
     const email = req.body?.email || '';
     return `reset:${ip}:${email}`;
   },
@@ -330,9 +334,9 @@ export const createCustomLimiter = ({
     store: createStore(),
 
     keyGenerator: (req) => {
-      const identifier = req.user?.id || req.ip;
-      return `${keyPrefix}:${identifier}`;
-    },
+  const identifier = req.user?.id || ipKeyGenerator(req); // ✅ Use helper
+  return `${keyPrefix}:${identifier}`;
+},
 
     handler: createLimitHandler(message, windowMinuts)
   });

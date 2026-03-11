@@ -1,5 +1,7 @@
-import { query, pool } from '../models/db';
-import { uploadPropertyImage, deletePropertyImage } from '../utils/imageUpload';
+
+import db from '../models/db.js';
+const { query, pool } = db;
+import { uploadToCloudinary, deletePropertyImage } from '../utils/imageUpload.js';
 
 // ============================================================
 // GET /api/properties - List with pagination and filters
@@ -172,7 +174,7 @@ const getAllProperties = async (req, res, next) => {
         p.year_built,
         p.status,
         p.featured,
-        p.views_count,
+        p.view_count,
         p.published_at,
         p.created_at,
         COALESCE(
@@ -366,7 +368,7 @@ const getSimilarProperties = async (req, res, next) => {
     }
 
     // Get current property details
-    const currentProperty = await query(
+    const currentProperty = await db.query(
       'SELECT city, property_type, price, listing_type FROM properties WHERE id = $1',
       [id]
     );
@@ -392,7 +394,7 @@ const getSimilarProperties = async (req, res, next) => {
     const maxPrice = parseFloat(price) + priceRange;
 
     // Find similar properties (prioritize: same city > same type > similar price)
-    const { rows } = await query(
+    const { rows } = await db.query(
       `SELECT 
         p.*,
         COALESCE(
@@ -658,7 +660,7 @@ const uploadImages = async (req, res, next) => {
 
     // Upload all images to Cloudinary in parallel
     const uploadPromises = req.files.map(file =>
-      uploadPropertyImage(file.buffer, file.mimetype)
+      uploadToCloudinary(file.buffer)
     );
 
     const results = await Promise.all(uploadPromises);
@@ -715,7 +717,7 @@ const deleteImage = async (req, res, next) => {
 // ============================================================
 // EXPORTS
 // ============================================================
-export default {
+export {
   getAllProperties,
   getFeaturedProperties,
   getPropertyById,

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 const router = Router();
-import { login, logout, getMe, getDashboard, getInquiries, updateInquiryStatus, getAnalytics } from '../controllers/adminController';
-import { authenticateAdmin } from '../middleware/auth';
-import { validateLogin } from '../middleware/validation';
-import { loginLimiter } from '../middleware/rateLimiter';
+import { login, logout, getMe, getDashboard, getInquiries, updateInquiryStatus, getAnalytics } from '../controllers/adminController.js';
+import { authenticateAdmin } from '../middleware/auth.js';
+import { validateLogin } from '../middleware/validation.js';
+import { loginLimiter } from '../middleware/rateLimiter.js';
 
 /**
  * @swagger
