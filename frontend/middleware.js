@@ -1,59 +1,64 @@
+// 
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const secret = new TextEncoder().encode(ProcessingInstruction.env.JWT_SECRET);
+const isDemoMode = process.env.DEMO_MODE === "true";
+const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 async function verifyAdminToken(token) {
-    try{
-        const {payload} = await jwtVerify(token, secret);
-
-        // role check
-        if(payload.role != 'admin'){
-            return false;
-        }
-        return true;
-    }catch{
-        return false;
-    }
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    if (payload.role !== "admin") return false;
+    return true;
+  } catch {
+    return false;
+  }
 }
-export async function middleware(request){
-    const {pathname} = request.nextUrl;
 
-    const token = request.cookies.get('auth_token')?.value;
+// export async function middleware(request) {
+//   if (isDemoMode) {
+//     return NextResponse.next(); // 🔓 Bypass everything for demo
+//   }
 
-    const isAdminRoute = pathname.startsWith('/admin');
-    const isLoginRoute = pathname === '/admin/login';
+//   const { pathname } = request.nextUrl;
+//   const token = request.cookies.get("auth_token")?.value;
 
-    // protect admin routes
+//   const isAdminRoute = pathname.startsWith("/admin");
+//   const isLoginRoute = pathname === "/admin/login";
 
-    if(isAdminRoute && !isLoginRoute){
-        if(!token){
-            return NextResponse.redirect(
-                new URL('/admin.login', request.url)    
-            );
-        }
+//   if (isAdminRoute && !isLoginRoute) {
+//     if (!token) {
+//       return NextResponse.redirect(
+//         new URL("/admin/login", request.url)
+//       );
+//     }
 
-        const isValid = await verifyAdminToken(token);
+//     const isValid = await verifyAdminToken(token);
 
-        if(!isValid){
-            return NextResponse.redirect(
-                new URL('/admin/login', request.url)      
-            );
-        }
-    }
-    // prevent loggen-in admins from accessing login page
+//     if (!isValid) {
+//       return NextResponse.redirect(
+//         new URL("/admin/login", request.url)
+//       );
+//     }
+//   }
 
-if(isLoginRoute && token){
-    const valid = await verifyAdminToken(token);
+//   if (isLoginRoute && token) {
+//     const isValid = await verifyAdminToken(token);
 
-    if(isValid){
-        return NextResponse.redirect(
-            new URL('/admin/dashboard', request.url)
-        );
-    }
+//     if (isValid) {
+//       return NextResponse.redirect(
+//         new URL("/admin/dashboard", request.url)
+//       );
+//     }
+//   }
+
+//   return NextResponse.next();
+// }
+
+export function middleware() {
+  return NextResponse.next();
 }
-return NextResponse.next();
-}
+
 export const config = {
-    matcher: ['/admin/:path'],
+  matcher: ["/admin/:path*"],
 };

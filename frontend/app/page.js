@@ -52,7 +52,9 @@ export default async function HomePage() {
         <StatsSection />
 
         {/* {/* 3. Featured Properties */}
-          <section className="py-20 bg-gray-50">
+
+        <FeaturedProperties properties={featuredProperties} />
+          {/* <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="font-playfair text-4xl font-bold text-gray-900 mb-4">
@@ -74,7 +76,7 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-       
+        */}
         {/* 4. Why Choose Us */}
         <WhyChooseUs />
 
