@@ -10,6 +10,7 @@ import FeaturedProperties from "./components/FeaturedProperties";
 import WhyChooseUs from "./components/WhyChooseUs";
 import StatsSection from "./components/StatsSection";
 import CTASection from "./components/CTASection";
+import PropertyVideos from "./components/PropertyVideo";
 
 // Server-side fetch (ISR enabled)
 async function getFeaturedProperties() {
@@ -77,6 +78,9 @@ export default async function HomePage() {
           </div>
         </section>
         */}
+        {/* Propertyvideo section  */}
+        <PropertyVideos />
+
         {/* 4. Why Choose Us */}
         <WhyChooseUs />
 
