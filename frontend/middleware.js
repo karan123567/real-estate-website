@@ -15,47 +15,43 @@ async function verifyAdminToken(token) {
   }
 }
 
-// export async function middleware(request) {
-//   if (isDemoMode) {
-//     return NextResponse.next(); // 🔓 Bypass everything for demo
-//   }
+export async function middleware(request) {
+  if (isDemoMode) {
+    return NextResponse.next(); // 🔓 Bypass everything for demo
+  }
 
-//   const { pathname } = request.nextUrl;
-//   const token = request.cookies.get("auth_token")?.value;
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get("auth_token")?.value;
 
-//   const isAdminRoute = pathname.startsWith("/admin");
-//   const isLoginRoute = pathname === "/admin/login";
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isLoginRoute = pathname === "/admin/login";
 
-//   if (isAdminRoute && !isLoginRoute) {
-//     if (!token) {
-//       return NextResponse.redirect(
-//         new URL("/admin/login", request.url)
-//       );
-//     }
+  if (isAdminRoute && !isLoginRoute) {
+    if (!token) {
+      return NextResponse.redirect(
+        new URL("/admin/login", request.url)
+      );
+    }
 
-//     const isValid = await verifyAdminToken(token);
+    const isValid = await verifyAdminToken(token);
 
-//     if (!isValid) {
-//       return NextResponse.redirect(
-//         new URL("/admin/login", request.url)
-//       );
-//     }
-//   }
+    if (!isValid) {
+      return NextResponse.redirect(
+        new URL("/admin/login", request.url)
+      );
+    }
+  }
 
-//   if (isLoginRoute && token) {
-//     const isValid = await verifyAdminToken(token);
+  if (isLoginRoute && token) {
+    const isValid = await verifyAdminToken(token);
 
-//     if (isValid) {
-//       return NextResponse.redirect(
-//         new URL("/admin/dashboard", request.url)
-//       );
-//     }
-//   }
+    if (isValid) {
+      return NextResponse.redirect(
+        new URL("/admin/dashboard", request.url)
+      );
+    }
+  }
 
-//   return NextResponse.next();
-// }
-
-export function middleware() {
   return NextResponse.next();
 }
 

@@ -53,7 +53,7 @@ app.use(cors({
 // Handle preflight requests explicitly
 // app.options('*', cors());
 // Enable CORS preflight for all routes
-app.use(cors());
+// app.use(cors());
 
 // ─── Cookie Parser (MUST be before routes) ─────────────────
 app.use(cookieParser());  // ← Parse cookies from req.cookies
