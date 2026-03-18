@@ -3,7 +3,7 @@ import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';  // ← ADD THIS
-import { setupSwagger } from './config/swagger.js';
+// import { setupSwagger } from './config/swagger.js';
 
 // Import routes
 import propertyRoutes from './routes/properties.js';
@@ -94,7 +94,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 // ─── Swagger API Documentation ────────────────────────────
-setupSwagger(app);
+// setupSwagger(app);
 
 // ─── 404 Handler ──────────────────────────────────────────
 app.use((req, res) => {
