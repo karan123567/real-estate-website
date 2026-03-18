@@ -1,5 +1,5 @@
 import { query } from '../models/db.js';
-import { sendInquiryEmails } from '../utils/email.js';
+import { sendInquiryEmails } from '../utils/emailService.js';
 
 // ============================================================
 // POST /api/inquiries - Submit contact form / inquiry
