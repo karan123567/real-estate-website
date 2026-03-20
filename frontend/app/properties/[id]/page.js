@@ -1,8 +1,8 @@
 // Single property detail page
 
 import { notFound } from 'next/navigation';
-import Navbar from "/components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "@/app/components/Navbar";
+import Footer from "@/app/components/Footer";
 // import PropertyDetailClient from '@/components/property/PropertyDetailClient';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

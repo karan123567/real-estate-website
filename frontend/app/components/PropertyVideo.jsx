@@ -1,6 +1,6 @@
 "use client";
 
-import { Section } from "lucide-react";
+import { Play, X } from "lucide-react";
 // purpose: Property videos showcase - infinite auto-scroll carousel + Youtube modal
 // Place between FeaturedProperties & WhyChooseUs on homepage
 
