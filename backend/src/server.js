@@ -3,7 +3,7 @@ import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import { closePool } from '../config/database.js';  // ← Import closePool
+import { closePool } from './models/db.js';  // ← Import closePool
 
 // Import routes
 import propertyRoutes from './routes/properties.js';
