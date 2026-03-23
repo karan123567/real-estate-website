@@ -29,7 +29,8 @@ const allowedOrigins = [
   'http://localhost:3001',
   process.env.FRONTEND_URL,
   'https://www.parthestatemart.com',
-  'https://parthestatemart.com'
+  'https://parthestatemart.com',
+  'https://vercel.com/karan123567s-projects/real-estate-website-bh2e/6HY5KKpWcXdHS2MkLbEVuCScQ5yV'
 ].filter(Boolean);
 
 app.use(cors({
