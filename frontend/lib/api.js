@@ -188,8 +188,12 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+const NEXT_URL = typeof window !== 'undefined' ? '' : (process.env.NEXTAUTH_URL || 'http://localhost:3000');
+
 // Helper function for API calls
 async function apiFetch(endpoint, options = {}) {
+  const isProxied = ['/api/admin/login', '/api/admin/logout'].includes(endpoint);
+  const baseUrl = isProxied ? NEXT_URL : API_URL;
   const config = {
     credentials: 'include',  // Send cookies with every request
     headers: {
@@ -199,7 +203,7 @@ async function apiFetch(endpoint, options = {}) {
     ...options,
   };
 
-  const response = await fetch(`${API_URL}${endpoint}`, config);
+  const response = await fetch(`${baseUrl}${endpoint}`, config);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
