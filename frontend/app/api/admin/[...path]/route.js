@@ -4,12 +4,15 @@ import { cookies } from "next/headers";
 const BACKEND_URL = process.env.BACKEND_URL;
 
 async function handler(request, { params }) {
-  const path = params.path.join("/");
+  // ✅ Fix 1 — await params
+  const { path: pathSegments } = await params;
+  const path = pathSegments.join("/");
+  
   const url = new URL(request.url);
-  const queryString = url.search; // preserve ?days=30 etc
+  const queryString = url.search;
 
-  // ✅ Read cookie from Next.js domain and forward to backend
-  const cookieStore = cookies();
+  // ✅ Fix 2 — await cookies()
+  const cookieStore = await cookies();
   const token = cookieStore.get("auth_token")?.value;
 
   const headers = {
