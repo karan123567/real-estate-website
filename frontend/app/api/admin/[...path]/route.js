@@ -6,8 +6,11 @@ const BACKEND_URL = process.env.BACKEND_URL;
 async function handler(request, { params }) {
   // ✅ Guard: BACKEND_URL must be set
   if (!BACKEND_URL) {
-    console.error('❌ BACKEND_URL environment variable is not set');
-    return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+    console.error("❌ BACKEND_URL environment variable is not set");
+    return NextResponse.json(
+      { error: "Server misconfiguration" },
+      { status: 500 },
+    );
   }
 
   const { path: pathSegments } = await params;
@@ -37,14 +40,11 @@ async function handler(request, { params }) {
   try {
     console.log(`→ Proxy: ${request.method} /api/admin/${path}`);
 
-    const res = await fetch(
-      `${BACKEND_URL}/api/admin/${path}${queryString}`,
-      {
-        method: request.method,
-        headers,
-        ...(body !== undefined && { body }),
-      }
-    );
+    const res = await fetch(`${BACKEND_URL}/api/admin/${path}${queryString}`, {
+      method: request.method,
+      headers,
+      ...(body !== undefined && { body }),
+    });
 
     const data = await res.json();
     console.log(`← Proxy response: ${res.status} for /api/admin/${path}`);
@@ -57,32 +57,39 @@ async function handler(request, { params }) {
       return response;
     }
 
-    // Logout → clear cookie
+    // Logout → clear cookie on Next.js domain
     if (path === "logout") {
       const response = NextResponse.json(data, { status: res.status });
+
+      const isProd = process.env.NODE_ENV === "production";
+
+      // ✅ Must EXACTLY match how cookie was originally set
       response.cookies.set("auth_token", "", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax", // ← matches backend exactly
         maxAge: 0,
         path: "/",
       });
+
       return response;
     }
 
     return NextResponse.json(data, { status: res.status });
-
   } catch (error) {
-    console.error(`❌ Proxy error [${request.method} /api/admin/${path}]:`, error.message);
+    console.error(
+      `❌ Proxy error [${request.method} /api/admin/${path}]:`,
+      error.message,
+    );
     return NextResponse.json(
       { error: "Proxy error", detail: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
-export const GET    = handler;
-export const POST   = handler;
-export const PUT    = handler;
+export const GET = handler;
+export const POST = handler;
+export const PUT = handler;
 export const DELETE = handler;
-export const PATCH  = handler;
+export const PATCH = handler;
