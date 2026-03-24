@@ -182,23 +182,23 @@ export default function AdminLayout({ children, title }) {
     fetchAdmin();
   }, [router, isDemo]);
 
-  const handleLogout = async () => {
+ const handleLogout = async () => {
     if (isDemo) {
       toast.success('Demo logout');
-      window.location.href('/admin/login');
+      window.location.href = '/admin/login';  // ✅ hard redirect
       return;
     }
     try {
       await adminAPI.logout();
       toast.success('Logged out successfully');
     } catch {
-      toast.error('Logout failed');
+      console.error('Logout API failed, clearing session anyway');
     } finally {
-      // Always redirect - no matter what happens above
+      // ✅ ALWAYS runs — success or fail
       window.location.href = '/admin/login';
     }
-  }; 
-
+  };
+  
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
