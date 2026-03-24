@@ -187,13 +187,13 @@
 // ============================================================
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const NEXT_BASE = '';
 
-const NEXT_URL = typeof window !== 'undefined' ? '' : (process.env.NEXTAUTH_URL || 'http://localhost:3000');
 
 // Helper function for API calls
 async function apiFetch(endpoint, options = {}) {
-  const isProxied = ['/api/admin/login', '/api/admin/logout'].includes(endpoint);
-  const baseUrl = isProxied ? NEXT_URL : API_URL;
+  const isAdminRoute = endpoint.startsWith('/api/admin');
+  const baseUrl = isAdminRoute ? NEXT_BASE : API_URL;
   const config = {
     credentials: 'include',  // Send cookies with every request
     headers: {
