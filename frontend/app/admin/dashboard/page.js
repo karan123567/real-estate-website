@@ -423,11 +423,11 @@
 //   );
 // }
 
+import { cookies } from 'next/headers';
 import AdminLayout from '../../components/admin/AdminLayout';
 import StatCard from '../../components/admin/StatCard';
 import DashboardCharts from '../../components/admin/DashboardCharts';
 import { timeAgo } from '@/lib/utils';
-import { adminAPI } from '@/lib/api';
 import Link from 'next/link';
 
 const STATUS_STYLES = {
@@ -437,29 +437,48 @@ const STATUS_STYLES = {
   resolved:  'bg-white/5 text-white/25 border border-white/10',
 };
 
-export default async function AdminDashboard() {
-  // ✅ Fetch both dashboard + analytics in parallel
-  let dashboard = { stats: {}, recentInquiries: [] };
-  let analytics = { visitorsOverTime: [], topProperties: [] };
-
+// ✅ Call backend directly from server component
+async function fetchDashboardData() {
   try {
-    [dashboard, analytics] = await Promise.all([
-      adminAPI.getDashboard(),
-      adminAPI.getAnalytics(30),
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value;
+
+    if (!token) return { dashboard: null, analytics: null };
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Cookie: `auth_token=${token}`,  // ✅ forward cookie to backend directly
+    };
+
+    const BACKEND = process.env.BACKEND_URL;
+
+    const [dashRes, analyticsRes] = await Promise.all([
+      fetch(`${BACKEND}/api/admin/dashboard`, { headers, cache: 'no-store' }),
+      fetch(`${BACKEND}/api/admin/analytics?days=30`, { headers, cache: 'no-store' }),
     ]);
-  } catch {
-    // show empty state if API fails
+
+    const dashboard = dashRes.ok ? await dashRes.json() : null;
+    const analytics = analyticsRes.ok ? await analyticsRes.json() : null;
+
+    return { dashboard, analytics };
+  } catch (error) {
+    console.error('Dashboard fetch error:', error);
+    return { dashboard: null, analytics: null };
   }
+}
 
-  // ✅ Fix key mapping to match backend response
-  const stats = dashboard?.stats || {};
-  const totalProperties  = stats?.properties?.total    ?? 0;
-  const monthlyInquiries = stats?.inquiries?.monthly   ?? 0;
-  const newInquiries     = stats?.inquiries?.new       ?? 0;
-  const monthlyVisitors  = stats?.visitors?.monthly    ?? 0;
-  const recentInquiries  = dashboard?.recentInquiries  ?? [];
+export default async function AdminDashboard() {
+  const { dashboard, analytics } = await fetchDashboardData();
 
-  // ✅ Build chart data from real analytics
+  // ✅ Correct keys matching backend response
+  const stats            = dashboard?.stats || {};
+  const totalProperties  = stats?.properties?.total   ?? 0;
+  const monthlyInquiries = stats?.inquiries?.monthly  ?? 0;
+  const newInquiries     = stats?.inquiries?.new      ?? 0;
+  const monthlyVisitors  = stats?.visitors?.monthly   ?? 0;
+  const recentInquiries  = dashboard?.recentInquiries ?? [];
+
+  // ✅ Build visitors chart data
   const visitorsChartData = (analytics?.visitorsOverTime || []).map((d) => ({
     month: new Date(d.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
     visitors: d.visitors || 0,
@@ -469,9 +488,7 @@ export default async function AdminDashboard() {
   // ✅ Build top cities from top properties
   const cityMap = {};
   (analytics?.topProperties || []).forEach((p) => {
-    if (p.city) {
-      cityMap[p.city] = (cityMap[p.city] || 0) + (p.view_count || 1);
-    }
+    if (p.city) cityMap[p.city] = (cityMap[p.city] || 0) + (p.view_count || 1);
   });
   const cityChartData = Object.entries(cityMap)
     .map(([city, views]) => ({ city, listings: views }))
@@ -488,30 +505,10 @@ export default async function AdminDashboard() {
 
       {/* ── STAT CARDS ─────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <StatCard
-          title="Total Properties"
-          value={totalProperties}
-          icon="⊞"
-          color="gold"
-        />
-        <StatCard
-          title="Monthly Inquiries"
-          value={monthlyInquiries}
-          icon="◎"
-          color="green"
-        />
-        <StatCard
-          title="Monthly Visitors"
-          value={monthlyVisitors}
-          icon="◇"
-          color="blue"
-        />
-        <StatCard
-          title="New Inquiries"
-          value={newInquiries}
-          icon="○"
-          color="purple"
-        />
+        <StatCard title="Total Properties"  value={totalProperties}  icon="⊞" color="gold"   />
+        <StatCard title="Monthly Inquiries" value={monthlyInquiries} icon="◎" color="green"  />
+        <StatCard title="Monthly Visitors"  value={monthlyVisitors}  icon="◇" color="blue"   />
+        <StatCard title="New Inquiries"     value={newInquiries}     icon="○" color="purple" />
       </div>
 
       {/* ── CHARTS ─────────────────────────────────────── */}
@@ -530,18 +527,14 @@ export default async function AdminDashboard() {
           <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
             <div>
               <p className="text-[10px] tracking-[0.2em] uppercase text-white/25">Latest</p>
-              <h2
-                className="mt-0.5 text-xl font-semibold text-white"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
-              >
+              <h2 className="mt-0.5 text-xl font-semibold text-white"
+                style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 Recent Inquiries
               </h2>
             </div>
-            <Link
-              href="/admin/inquiries"
+            <Link href="/admin/inquiries"
               className="text-[10px] tracking-[0.15em] uppercase text-[#C9A96E]
-                         transition-opacity hover:opacity-60"
-            >
+                         transition-opacity hover:opacity-60">
               View All →
             </Link>
           </div>
@@ -551,20 +544,16 @@ export default async function AdminDashboard() {
               <p className="py-10 text-center text-sm text-white/20">No inquiries yet</p>
             ) : (
               recentInquiries.map((inq, idx) => (
-                <div
-                  key={inq.id}
+                <div key={inq.id}
                   className="flex items-center gap-3 px-5 py-3.5
-                             transition-colors hover:bg-white/[0.02]"
-                >
-                  <div
-                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center
-                               rounded-full text-[11px] font-semibold"
+                             transition-colors hover:bg-white/[0.02]">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center
+                                 rounded-full text-[11px] font-semibold"
                     style={{
                       background: AVATAR_COLORS[idx % AVATAR_COLORS.length] + '22',
                       color:      AVATAR_COLORS[idx % AVATAR_COLORS.length],
                       border:    `1px solid ${AVATAR_COLORS[idx % AVATAR_COLORS.length]}33`,
-                    }}
-                  >
+                    }}>
                     {initials(inq.name)}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -574,10 +563,8 @@ export default async function AdminDashboard() {
                     </p>
                   </div>
                   <div className="flex flex-shrink-0 flex-col items-end gap-1">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[9px] tracking-wide uppercase
-                        ${STATUS_STYLES[inq.status] || STATUS_STYLES.closed}`}
-                    >
+                    <span className={`rounded-full px-2 py-0.5 text-[9px] tracking-wide uppercase
+                      ${STATUS_STYLES[inq.status] || STATUS_STYLES.closed}`}>
                       {inq.status}
                     </span>
                     <span className="text-[10px] text-white/20">
@@ -590,7 +577,7 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Actions + Status */}
         <div className="flex flex-col gap-3">
           <div className="rounded-2xl border border-white/[0.06] bg-[#0d0d15] p-5">
             <p className="mb-4 text-[10px] tracking-[0.2em] uppercase text-white/25">
@@ -598,22 +585,19 @@ export default async function AdminDashboard() {
             </p>
             <div className="space-y-2">
               {[
-                { label: 'Add New Property',  desc: 'List a property',       icon: '+', href: '/admin/properties/new' },
-                { label: 'View Inquiries',    desc: `${newInquiries} pending`, icon: '◎', href: '/admin/inquiries' },
-                { label: 'Analytics Report',  desc: 'Full performance data', icon: '◇', href: '/admin/analytics' },
-                { label: 'View Public Site',  desc: 'See how it looks live', icon: '↗', href: '/', external: true },
+                { label: 'Add New Property',  desc: 'List a property',          icon: '+', href: '/admin/properties/new' },
+                { label: 'View Inquiries',    desc: `${newInquiries} pending`,  icon: '◎', href: '/admin/inquiries' },
+                { label: 'Analytics Report',  desc: 'Full performance data',    icon: '◇', href: '/admin/analytics' },
+                { label: 'View Public Site',  desc: 'See how it looks live',    icon: '↗', href: '/', external: true },
               ].map((action) => {
                 const Tag = action.external ? 'a' : Link;
                 const extraProps = action.external
                   ? { href: action.href, target: '_blank', rel: 'noopener noreferrer' }
                   : { href: action.href };
                 return (
-                  <Tag
-                    key={action.label}
-                    {...extraProps}
+                  <Tag key={action.label} {...extraProps}
                     className="group flex items-center gap-3 rounded-xl px-3 py-3
-                               transition-colors hover:bg-white/[0.04]"
-                  >
+                               transition-colors hover:bg-white/[0.04]">
                     <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center
                                    rounded-xl border border-[rgba(201,169,110,0.12)]
                                    bg-[rgba(201,169,110,0.06)] text-sm text-[#C9A96E]
@@ -654,8 +638,7 @@ export default async function AdminDashboard() {
                   <span className="text-[11px] font-medium text-white/60">{s.count}</span>
                 </div>
                 <div className="h-1 w-full overflow-hidden rounded-full bg-white/[0.05]">
-                  <div
-                    className="h-full rounded-full"
+                  <div className="h-full rounded-full"
                     style={{
                       width: `${Math.min(100, (s.count / (recentInquiries.length || 1)) * 100)}%`,
                       background: s.color,
