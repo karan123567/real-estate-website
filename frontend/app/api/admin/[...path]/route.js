@@ -4,13 +4,9 @@ import { cookies } from "next/headers";
 const BACKEND_URL = process.env.BACKEND_URL;
 
 async function handler(request, { params }) {
-  // ✅ Guard: BACKEND_URL must be set
   if (!BACKEND_URL) {
     console.error("❌ BACKEND_URL environment variable is not set");
-    return NextResponse.json(
-      { error: "Server misconfiguration" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
   }
 
   const { path: pathSegments } = await params;
@@ -37,6 +33,38 @@ async function handler(request, { params }) {
     }
   }
 
+  // ✅ Handle logout before fetching backend
+  // Clear cookie regardless of backend response
+  if (path === "logout") {
+    const isProd = process.env.NODE_ENV === "production";
+
+    // Try backend logout but don't depend on it
+    try {
+      await fetch(`${BACKEND_URL}/api/admin/logout`, {
+        method: "POST",
+        headers,
+      });
+    } catch {
+      console.log("Backend logout failed, clearing cookie anyway");
+    }
+
+    const response = NextResponse.json({ success: true });
+
+    // ✅ Clear with ALL possible attribute combos
+    // covers however the cookie was originally set
+    response.headers.append("Set-Cookie",
+      `auth_token=; Max-Age=0; Path=/; HttpOnly; ${isProd ? "Secure; SameSite=None" : "SameSite=Lax"}`
+    );
+    response.headers.append("Set-Cookie",
+      `auth_token=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax`
+    );
+    response.headers.append("Set-Cookie",
+      `auth_token=; Max-Age=0; Path=/; HttpOnly; SameSite=None; Secure`
+    );
+
+    return response;
+  }
+
   try {
     console.log(`→ Proxy: ${request.method} /api/admin/${path}`);
 
@@ -46,10 +74,20 @@ async function handler(request, { params }) {
       ...(body !== undefined && { body }),
     });
 
-    const data = await res.json();
+    // ✅ Safe JSON parsing — handles non-JSON error responses
+    let data;
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      const text = await res.text();
+      console.error(`Non-JSON response from backend [${res.status}]:`, text);
+      data = { error: text || "Backend error" };
+    }
+
     console.log(`← Proxy response: ${res.status} for /api/admin/${path}`);
 
-    // Login → save cookie
+    // ✅ Login → forward Set-Cookie from backend to browser
     if (path === "login" && res.ok) {
       const response = NextResponse.json(data, { status: res.status });
       const backendCookie = res.headers.get("set-cookie");
@@ -57,39 +95,19 @@ async function handler(request, { params }) {
       return response;
     }
 
-    // Logout → clear cookie on Next.js domain
-    if (path === "logout") {
-      const response = NextResponse.json(data, { status: res.status });
-
-      const isProd = process.env.NODE_ENV === "production";
-
-      // ✅ Must EXACTLY match how cookie was originally set
-      response.cookies.set("auth_token", "", {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax", // ← matches backend exactly
-        maxAge: 0,
-        path: "/",
-      });
-
-      return response;
-    }
-
     return NextResponse.json(data, { status: res.status });
+
   } catch (error) {
-    console.error(
-      `❌ Proxy error [${request.method} /api/admin/${path}]:`,
-      error.message,
-    );
+    console.error(`❌ Proxy error [${request.method} /api/admin/${path}]:`, error.message);
     return NextResponse.json(
       { error: "Proxy error", detail: error.message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
-export const GET = handler;
-export const POST = handler;
-export const PUT = handler;
+export const GET    = handler;
+export const POST   = handler;
+export const PUT    = handler;
 export const DELETE = handler;
-export const PATCH = handler;
+export const PATCH  = handler;

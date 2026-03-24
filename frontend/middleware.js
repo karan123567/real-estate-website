@@ -1,4 +1,3 @@
-// 
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
@@ -15,12 +14,29 @@ async function verifyAdminToken(token) {
   }
 }
 
+// ✅ Helper — clear cookie in response
+function clearAuthCookie(response) {
+  const isProd = process.env.NODE_ENV === "production";
+  response.headers.append("Set-Cookie",
+    `auth_token=; Max-Age=0; Path=/; HttpOnly; ${isProd ? "Secure; SameSite=None" : "SameSite=Lax"}`
+  );
+  response.headers.append("Set-Cookie",
+    `auth_token=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax`
+  );
+  response.headers.append("Set-Cookie",
+    `auth_token=; Max-Age=0; Path=/; HttpOnly; SameSite=None; Secure`
+  );
+  return response;
+}
+
 export async function middleware(request) {
-  if (isDemoMode) {
-    return NextResponse.next(); // 🔓 Bypass everything for demo
-  }
+  if (isDemoMode) return NextResponse.next();
 
   const { pathname } = request.nextUrl;
+
+  // ✅ Never block proxy API routes
+  if (pathname.startsWith("/api")) return NextResponse.next();
+
   const token = request.cookies.get("auth_token")?.value;
 
   const isAdminRoute = pathname.startsWith("/admin");
@@ -28,17 +44,15 @@ export async function middleware(request) {
 
   if (isAdminRoute && !isLoginRoute) {
     if (!token) {
-      return NextResponse.redirect(
-        new URL("/admin/login", request.url)
-      );
+      return NextResponse.redirect(new URL("/admin/login", request.url));
     }
 
     const isValid = await verifyAdminToken(token);
 
     if (!isValid) {
-      return NextResponse.redirect(
-        new URL("/admin/login", request.url)
-      );
+      // ✅ Clear bad/expired cookie and redirect
+      const response = NextResponse.redirect(new URL("/admin/login", request.url));
+      return clearAuthCookie(response);
     }
   }
 
@@ -46,9 +60,11 @@ export async function middleware(request) {
     const isValid = await verifyAdminToken(token);
 
     if (isValid) {
-      return NextResponse.redirect(
-        new URL("/admin/dashboard", request.url)
-      );
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    } else {
+      // ✅ Clear invalid cookie so login page actually shows
+      const response = NextResponse.next();
+      return clearAuthCookie(response);
     }
   }
 
@@ -56,5 +72,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };
