@@ -185,17 +185,19 @@ export default function AdminLayout({ children, title }) {
   const handleLogout = async () => {
     if (isDemo) {
       toast.success('Demo logout');
-      router.replace('/admin/login');
+      window.location.href('/admin/login');
       return;
     }
     try {
       await adminAPI.logout();
       toast.success('Logged out successfully');
-      router.replace('/admin/login');
     } catch {
       toast.error('Logout failed');
+    } finally {
+      // Always redirect - no matter what happens above
+      window.location.href = '/admin/login';
     }
-  };
+  }; 
 
   if (loading) {
     return (
