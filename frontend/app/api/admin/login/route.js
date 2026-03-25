@@ -1,32 +1,85 @@
+// import { NextResponse } from "next/server";
+
+// export async function POST(request) {
+//   const body = await request.json();
+
+//   // Forward to your real backend
+//   const res = await fetch(`${process.env.BACKEND_URL}/api/admin/login`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(body),
+//     credentials: "include",
+//   });
+
+//   const data = await res.json();
+
+//   if (!res.ok) {
+//     return NextResponse.json(data, { status: res.status });
+//   }
+
+//   // ✅ Set cookie on Next.js domain — middleware WILL see this
+//   const response = NextResponse.json(data);
+  
+//   // Extract token from backend's Set-Cookie header
+//   const setCookieHeader = res.headers.get("set-cookie");
+  
+//   if (setCookieHeader) {
+//     // Forward the cookie directly from backend response
+//     response.headers.set("set-cookie", setCookieHeader);
+//   }
+
+//   return response;
+// }
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
-  const body = await request.json();
+  try {
+    const body = await request.json();
 
-  // Forward to your real backend
-  const res = await fetch(`${process.env.BACKEND_URL}/api/admin/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-    credentials: "include",
-  });
+    const res = await fetch(`${process.env.BACKEND_URL}/api/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    return NextResponse.json(data, { status: res.status });
+    if (!res.ok) {
+      return NextResponse.json(data, { status: res.status });
+    }
+
+    // ✅ MUST be JWT token
+    const token = data.token;
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "Token missing from backend" },
+        { status: 500 }
+      );
+    }
+
+    const response = NextResponse.json({
+      success: true,
+      user: data.user || null,
+    });
+
+    // ✅ MATCH middleware expectations
+    response.cookies.set("auth_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return response;
+
+  } catch (error) {
+    console.error("Login error:", error.message);
+
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-
-  // ✅ Set cookie on Next.js domain — middleware WILL see this
-  const response = NextResponse.json(data);
-  
-  // Extract token from backend's Set-Cookie header
-  const setCookieHeader = res.headers.get("set-cookie");
-  
-  if (setCookieHeader) {
-    // Forward the cookie directly from backend response
-    response.headers.set("set-cookie", setCookieHeader);
-  }
-
-  return response;
 }
