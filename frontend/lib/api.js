@@ -204,6 +204,14 @@ async function apiFetch(endpoint, options = {}) {
 
   const response = await fetch(`${baseUrl}${endpoint}`, config);
 
+  // ✅ Add this — global 401 handler
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Session expired. Please login again.');
+  }
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.message || error.error || 'API request failed');
