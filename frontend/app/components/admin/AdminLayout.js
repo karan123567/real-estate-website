@@ -188,7 +188,6 @@ export default function AdminLayout({ children, title }) {
       window.location.href = '/admin/login';  // ✅ hard redirect
       return;
     }
-    window.location.href = "/admin/login";
     try {
       await adminAPI.logout();
       toast.success('Logged out successfully');
