@@ -187,13 +187,12 @@
 // ============================================================
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-const NEXT_BASE = '';
 
 
 // Helper function for API calls
 async function apiFetch(endpoint, options = {}) {
   const isAdminRoute = endpoint.startsWith('/api/admin');
-  const baseUrl = isAdminRoute ? NEXT_BASE : API_URL;
+  const baseUrl = API_URL;
   const config = {
     credentials: 'include',  // Send cookies with every request
     headers: {
