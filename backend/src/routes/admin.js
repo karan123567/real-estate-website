@@ -32,9 +32,9 @@ import { loginLimiter } from '../middleware/rateLimiter.js';
  *         description: Invalid credentials
  */
 router.post('/login', loginLimiter, validateLogin, login);
+router.post('/logout', logout);
 
 // Protected routes (require JWT)
-router.post('/logout', authenticateAdmin, logout);
 router.get('/me', authenticateAdmin, getMe);
 router.get('/dashboard', authenticateAdmin, getDashboard);
 router.get('/inquiries', authenticateAdmin, getInquiries);
