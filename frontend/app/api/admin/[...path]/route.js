@@ -9,8 +9,19 @@ async function handler(request, { params }) {
   }
 
   // ✅ Fix params
-  const pathSegments = params.path || [];
-  const path = pathSegments.join("/");
+//   const pathSegments = params.path || [];
+//   const path = pathSegments.join("/");
+
+const pathSegments = params?.path;
+
+if (!pathSegments || pathSegments.length === 0) {
+  return NextResponse.json(
+    { error: "Missing API path" },
+    { status: 400 }
+  );
+}
+
+const path = pathSegments.join("/");
 
   const url = new URL(request.url);
   const queryString = url.search;
