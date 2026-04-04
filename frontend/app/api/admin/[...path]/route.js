@@ -16,12 +16,24 @@ async function handler(request, { params }) {
   const queryString = url.search;
 
   const cookieStore = cookies();
-  const token = cookieStore.get("auth_token")?.value;
+//   const token = cookieStore.get("auth_token")?.value;
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...(token && { Cookie: `auth_token=${token}` }),
-  };
+const cookieHeader = request.headers.get("cookie") || "";
+
+const token = cookieHeader
+  .split("; ")
+  .find(c => c.startsWith("auth_token="))
+  ?.split("=")[1];
+
+//   const headers = {
+//     "Content-Type": "application/json",
+//     ...(token && { Cookie: `auth_token=${token}` }),
+//   };
+
+const headers = {
+  "Content-Type": "application/json",
+  ...(token && { Authorization: `Bearer ${token}` }),
+};
 
   let body;
   if (["POST", "PUT", "PATCH"].includes(request.method)) {
