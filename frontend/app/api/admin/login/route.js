@@ -30,6 +30,59 @@
 
 //   return response;
 // }
+// import { NextResponse } from "next/server";
+
+// export async function POST(request) {
+//   try {
+//     const body = await request.json();
+
+//     const res = await fetch(`${process.env.BACKEND_URL}/api/admin/login`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(body),
+//     });
+
+//     const data = await res.json();
+
+//     if (!res.ok) {
+//       return NextResponse.json(data, { status: res.status });
+//     }
+
+//     // ✅ MUST be JWT token
+//     const token = data.token;
+
+//     if (!token) {
+//       return NextResponse.json(
+//         { error: "Token missing from backend" },
+//         { status: 500 }
+//       );
+//     }
+
+//     const response = NextResponse.json({
+//       success: true,
+//       user: data.user || null,
+//     });
+
+//     // ✅ MATCH middleware expectations
+//     response.cookies.set("auth_token", token, {
+//       httpOnly: true,
+//       secure: true,
+//       sameSite: "none",
+//       path: "/",
+//       maxAge: 60 * 60 * 24 * 7,
+//     });
+
+//     return response;
+
+//   } catch (error) {
+//     console.error("Login error:", error.message);
+
+//     return NextResponse.json(
+//       { error: "Internal server error" },
+//       { status: 500 }
+//     );
+//   }
+// }
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
