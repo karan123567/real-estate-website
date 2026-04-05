@@ -95,40 +95,42 @@ export async function POST(request) {
       body: JSON.stringify(body),
     });
 
-    const data = await res.json();
+    // ✅ Safe parse
+    let data;
+    const contentType = res.headers.get("content-type") || "";
 
-    if (!res.ok) {
-      return NextResponse.json(data, { status: res.status });
-    }
-
-    // ✅ MUST be JWT token
-    const token = data.token;
-
-    if (!token) {
+    if (contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      const text = await res.text();
+      console.error("❌ Backend non-JSON:", text);
       return NextResponse.json(
-        { error: "Token missing from backend" },
+        { error: "Invalid backend response", raw: text },
         { status: 500 }
       );
     }
 
+    // ❌ login failed
+    if (!res.ok) {
+      return NextResponse.json(data, { status: res.status });
+    }
+
     const response = NextResponse.json({
       success: true,
-      user: data.user || null,
+      user: data.admin || null,
     });
 
-    // ✅ MATCH middleware expectations
-    response.cookies.set("auth_token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
+    // ✅ VERY IMPORTANT: forward backend cookie
+    const setCookie = res.headers.get("set-cookie");
+
+    if (setCookie) {
+      response.headers.set("set-cookie", setCookie);
+    }
 
     return response;
 
   } catch (error) {
-    console.error("Login error:", error.message);
+    console.error("❌ Login error:", error.message);
 
     return NextResponse.json(
       { error: "Internal server error" },

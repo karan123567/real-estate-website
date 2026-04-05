@@ -202,9 +202,9 @@ async function handler(request) {
       ?.split("=")[1];
 
     const headers = {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
+  "Content-Type": "application/json",
+  ...(cookieHeader && { Cookie: cookieHeader }), // ✅ forward cookie
+};
 
     let body;
     if (["POST", "PUT", "PATCH"].includes(request.method)) {
