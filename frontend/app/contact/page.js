@@ -71,7 +71,7 @@ export default function ContactPage() {
           {/* ── Page Header ── */}
           <div className="mb-14 text-center">
             <p className="mb-3 text-xs tracking-[0.35em] uppercase text-blue-300/70">
-              LuxEstate · Support
+              ParthEstateMart · Support
             </p>
             <h1
               className="mb-4 text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl"
@@ -108,12 +108,12 @@ export default function ContactPage() {
                 {
                   icon: '📞',
                   title: 'Call Us',
-                  lines: ['+91 98765 43210', 'Mon–Sat, 9am – 7pm IST'],
+                  lines: ['+91 93190 25925', 'Mon–Sat, 9am – 7pm IST'],
                 },
                 {
                   icon: '✉️',
                   title: 'Email',
-                  lines: ['hello@luxestate.in', 'We reply within 24 hours'],
+                  lines: ['cschandrahr@gmail.com', 'We reply within 24 hours'],
                 },
               ].map((item) => (
                 <div

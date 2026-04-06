@@ -335,6 +335,144 @@
 //   );
 // }
 
+// "use client";
+
+// import { useState, useEffect, useRef } from "react";
+// import Link from "next/link";
+// import { usePathname } from "next/navigation";
+
+// const NAV_LINKS = [
+//   { href: "/", label: "Home" },
+//   { href: "/properties", label: "Properties" },
+//   { href: "/aboutus", label: "About" },
+//   { href: "/contact", label: "Contact" },
+// ];
+
+// export default function Navbar() {
+//   const [isScrolled, setIsScrolled] = useState(false);
+//   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+//   const pathname = usePathname();
+//   const sentinelRef = useRef(null);
+
+//   // Scroll sentinel on ALL screen sizes — transparent at top, solid on scroll
+//   useEffect(() => {
+//     const observer = new IntersectionObserver(
+//       ([entry]) => {
+//         setIsScrolled(!entry.isIntersecting);
+//       },
+//       { threshold: 0 },
+//     );
+//     if (sentinelRef.current) observer.observe(sentinelRef.current);
+//     return () => observer.disconnect();
+//   }, []);
+
+//   useEffect(() => {
+//     setIsMobileOpen(false);
+//   }, [pathname]);
+
+//   useEffect(() => {
+//     document.body.style.overflow = isMobileOpen ? "hidden" : "";
+//     return () => { document.body.style.overflow = ""; };
+//   }, [isMobileOpen]);
+
+//   useEffect(() => {
+//     const handleKey = (e) => { if (e.key === "Escape") setIsMobileOpen(false); };
+//     if (isMobileOpen) window.addEventListener("keydown", handleKey);
+//     return () => window.removeEventListener("keydown", handleKey);
+//   }, [isMobileOpen]);
+
+//   const headerStyles = isScrolled ? "bg-white shadow-md py-3" : "bg-transparent py-5";
+//   const textColor    = isScrolled ? "text-gray-800" : "text-white";
+
+//   return (
+//     <>
+//       <div ref={sentinelRef} className="absolute top-0 h-[1px] w-full" />
+
+//       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerStyles}`}>
+//         <nav className="container mx-auto px-4 flex items-center justify-between">
+
+//           {/* Logo */}
+//           <Link href="/" className={`text-2xl font-bold transition-colors ${textColor}`}>
+//             ParthEstateMart
+//           </Link>
+
+//           {/* Desktop links */}
+//           <ul className="hidden md:flex gap-8 items-center">
+//             {NAV_LINKS.map(({ href, label }) => {
+//               const isActive = pathname === href;
+//               return (
+//                 <li key={href}>
+//                   <Link
+//                     href={href}
+//                     aria-current={isActive ? "page" : undefined}
+//                     className={`${textColor} font-medium hover:opacity-70 transition
+//                       ${isActive ? "underline underline-offset-4 font-semibold" : ""}`}
+//                   >
+//                     {label}
+//                   </Link>
+//                 </li>
+//               );
+//             })}
+//           </ul>
+
+//           {/* Desktop CTA */}
+//           <Link
+//             href="/contact"
+//             className="hidden md:block bg-gray-900 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-gray-700 transition"
+//           >
+//             Get in Touch
+//           </Link>
+
+//           {/* ✅ Hamburger — white over video, dark when scrolled */}
+//           <button
+//             onClick={() => setIsMobileOpen((prev) => !prev)}
+//             aria-expanded={isMobileOpen}
+//             aria-label="Toggle navigation"
+//             className={`md:hidden p-2 text-2xl transition-colors ${textColor}`}
+//           >
+//             {isMobileOpen ? "✕" : "☰"}
+//           </button>
+//         </nav>
+
+//         {/* ✅ Mobile menu — solid white/frosted so links are always readable */}
+//         <div
+//           className={`md:hidden bg-white/95 backdrop-blur-sm transition-all duration-300 ease-in-out
+//             ${isMobileOpen
+//               ? "max-h-screen opacity-100 pointer-events-auto"
+//               : "max-h-0 opacity-0 pointer-events-none overflow-hidden"
+//             }`}
+//         >
+//           <ul>
+//             {NAV_LINKS.map(({ href, label }) => {
+//               const isActive = pathname === href;
+//               return (
+//                 <li key={href}>
+//                   <Link
+//                     href={href}
+//                     className={`block px-6 py-4 border-b border-gray-100 text-gray-800
+//                       ${isActive ? "bg-gray-50 font-semibold" : ""}`}
+//                   >
+//                     {label}
+//                   </Link>
+//                 </li>
+//               );
+//             })}
+//           </ul>
+//           <div className="p-4">
+//             <Link
+//               href="/contact"
+//               className="block w-full text-center bg-gray-900 text-white py-3 rounded-lg font-semibold"
+//             >
+//               Get in Touch
+//             </Link>
+//           </div>
+//         </div>
+//       </header>
+//     </>
+//   );
+// }
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -393,8 +531,25 @@ export default function Navbar() {
         <nav className="container mx-auto px-4 flex items-center justify-between">
 
           {/* Logo */}
-          <Link href="/" className={`text-2xl font-bold transition-colors ${textColor}`}>
-            LuxEstate
+          <Link href="/" className="flex items-baseline">
+            <span
+              className={`font-serif text-xl font-bold tracking-tight transition-colors duration-300
+                ${isScrolled ? "text-[#1a2640]" : "text-white"}`}
+            >
+              Parth
+            </span>
+            <span
+              className={`font-serif text-xl font-normal italic tracking-tight transition-colors duration-300
+                ${isScrolled ? "text-[#b08d40]" : "text-[#d4a93a]"}`}
+            >
+              Estate
+            </span>
+            <span
+              className={`text-[9.5px] tracking-[0.28em] uppercase self-end mb-1 ml-1 transition-colors duration-300
+                ${isScrolled ? "text-[#9ba8b8]" : "text-white/50"}`}
+            >
+              Mart
+            </span>
           </Link>
 
           {/* Desktop links */}
@@ -472,4 +627,3 @@ export default function Navbar() {
     </>
   );
 }
-
