@@ -150,12 +150,12 @@ import Pagination from "../components/ui/Pagination";
 import SortDropdown from "../components/property/SortDropdown";
 import MobileFilterDrawer from "../components/property/MobileFilterDrawer";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 async function getProperties(searchParams) {
   const query = new URLSearchParams(searchParams).toString();
   try {
-    const res = await fetch(`${API_URL}/api/properties?${query}`, {
+    const res = await fetch(`/api/properties?${query}`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) return { properties: [], pagination: null };

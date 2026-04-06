@@ -81,12 +81,11 @@
 import { notFound } from 'next/navigation';
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+import PropertyDetailClient from '@/app/components/property/PropertyDetailClient';
 
 async function fetchProperty(id) {
     try {
-        const res = await fetch(`/api/properties/${id}`, {
-            next: { revalidate: 60 },
-        });
+        const res = await fetch(`${process.env.BACKEND_URL}/api/properties/${id}`)
 
         if (!res.ok) return null;
 
@@ -147,7 +146,7 @@ export default async function PropertyDetailPage({ params }) {
     return (
         <>
             <Navbar />
-            <PropertyDetailPage property={property} /> {/* ✅ fixed */}
+            <PropertyDetailClient property={property} /> {/* ✅ fixed */}
             <Footer />
         </>
     );
