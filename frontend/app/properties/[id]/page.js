@@ -147,7 +147,7 @@ export default async function PropertyDetailPage({ params }) {
     return (
         <>
             <Navbar />
-            <PropertyDetailClient property={property} /> {/* ✅ fixed */}
+            <PropertyDetailPage property={property} /> {/* ✅ fixed */}
             <Footer />
         </>
     );
