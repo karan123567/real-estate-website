@@ -309,7 +309,7 @@ const getPropertyById = async (req, res, next) => {
         p.*,
         COALESCE(
           json_agg(
-            DISTINCT jsonb_build_object(
+            jsonb_build_object(
               'url', pi.image_url, 
               'isPrimary', pi.is_primary,
               'displayOrder', pi.display_order
