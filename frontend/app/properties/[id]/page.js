@@ -84,9 +84,9 @@
 // ============================================================
 
 import { notFound } from 'next/navigation';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import PropertyDetailClient from '@/components/property/PropertyDetailClient';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
+import PropertyDetailClient from '../../components/property/PropertyDetailClient';
 
 // ✅ SEO Metadata
 export async function generateMetadata({ params }) {
