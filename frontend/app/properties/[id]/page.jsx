@@ -3,7 +3,6 @@
 import { notFound } from 'next/navigation';
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
-import PropertyDetailClient from '@/components/property/PropertyDetailClient';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -72,7 +71,7 @@ export default async function PropertyDetailPage({params}){
     return (
         <>
         <Navbar />
-        <PropertyDetailClient property={property} />
+        {/* <PropertyDetailClient property={property} /> */}
         <Footer />
         </>
     )
