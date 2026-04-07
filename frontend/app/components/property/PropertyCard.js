@@ -158,7 +158,7 @@ export default function PropertyCard({ property }) {
   const isNew = daysOld !== null && daysOld <= 7;
 
   return (
-    <Link href={`/properties/${property.id}`} className="block group">
+    <Link href={`/properties/${property._id}`} className="block group">
       <article
         className="relative rounded-2xl overflow-hidden border border-amber-100/60
                    hover:-translate-y-1.5 transition-all duration-300 bg-white h-full flex flex-col"
