@@ -401,13 +401,13 @@ export default function PropertyDetailClient({ property }) {
                   </button>
 
                   <a
-                    href="tel:+919876543210"
+                    href="tel:+919319025925"
                     className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl
                                border border-white/10 py-3.5 text-[13px] text-white/50
                                transition-all hover:border-[#C9A96E]/30 hover:text-[#C9A96E]"
                   >
                     <Phone className="h-4 w-4" />
-                    Call Agent
+                    Call Agent Now
                   </a>
                 </div>
 
