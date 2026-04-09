@@ -14,7 +14,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 // Fetch properties on server
 async function getProperties(searchParams) {
-  const query = new URLSearchParams(searchParams).toString();
+  const resolvedParams = await searchParams;
+  const query = new URLSearchParams(resolvedParams).toString();
 
   try {
     const res = await fetch(`${API_URL}/api/properties?${query}`, {
@@ -31,16 +32,17 @@ async function getProperties(searchParams) {
 }
 
 export default async function PropertiesPage({ searchParams }) {
-  const currentPage = Math.max(1, parseInt(searchParams.page) || 1);
+  const resolvedParams = await searchParams;
+  const currentPage = Math.max(1, parseInt(resolvedParams.page) || 1);
 
   const filters = {
-    city: searchParams.city || "",
-    propertyType: searchParams.propertyType || "",
-    listingType: searchParams.listingType || "",
-    minPrice: searchParams.minPrice || "",
-    maxPrice: searchParams.maxPrice || "",
-    bedrooms: searchParams.bedrooms || "",
-    sortBy: searchParams.sortBy || "",
+    city: resolvedParams.city || "",
+    propertyType: resolvedParams.propertyType || "",
+    listingType: resolvedParams.listingType || "",
+    minPrice: resolvedParams.minPrice || "",
+    maxPrice: resolvedParams.maxPrice || "",
+    bedrooms: resolvedParams.bedrooms || "",
+    sortBy: resolvedParams.sortBy || "",
     page: currentPage,
     limit: 12,
   };

@@ -90,9 +90,10 @@ import PropertyDetailClient from '../../components/property/PropertyDetailClient
 
 // ✅ SEO Metadata
 export async function generateMetadata({ params }) {
+  const { id } = await params;
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/properties/${params.id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/properties/${id}`,
       { next: { revalidate: 300 } }
     );
 
@@ -136,7 +137,8 @@ async function getProperty(id) {
 }
 
 export default async function PropertyDetailPage({ params }) {
-  const property = await getProperty(params.id);
+  const { id } = await params;
+  const property = await getProperty(id);
 
   if (!property) {
     notFound();
