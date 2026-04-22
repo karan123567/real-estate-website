@@ -103,7 +103,7 @@ export default function ContactPage() {
                 {
                   icon: '📍',
                   title: 'Our Office',
-                  lines: ['Bandra Kurla Complex,', 'Mumbai — 400051, India'],
+                  lines: ['Plot No-A-40, Gali No-4, Rajender Nagar Indl.Area Mohan Nagar,', 'Ghaziabad(UP)-201007, India'],
                 },
                 {
                   icon: '📞',

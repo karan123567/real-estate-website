@@ -194,7 +194,7 @@ export const metadata = {
     description: DESCRIPTION,
     images: [
       {
-        url:    `${SITE_URL}/og-image.jpg`,
+        url:    `${SITE_URL}/og-image.png`,
         width:  1200,
         height: 630,
         alt:    `${SITE_NAME} — Noida Real Estate`,
@@ -207,7 +207,7 @@ export const metadata = {
     card:        "summary_large_image",
     title:       `${SITE_NAME} | Best Property in Noida & NCR`,
     description: DESCRIPTION,
-    images:      [`${SITE_URL}/og-image.jpg`],
+    images:      [`${SITE_URL}/og-image.png`],
   },
 
   // ── Verification (add your codes here) ───────────────────

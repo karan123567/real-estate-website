@@ -56,7 +56,7 @@ export default function Footer() {
             </div>
 
             <p className="mb-6 max-w-xs text-sm leading-relaxed text-gray-500">
-              Your trusted partner for verified properties across India. From
+              Your trusted partner for verified properties across NCR. From
               first home to dream home — we've got you covered.
             </p>
 
@@ -152,7 +152,7 @@ export default function Footer() {
                 {
                   icon: "📍",
                   label: "Office",
-                  value: "Bandra Kurla Complex, Mumbai",
+                  value: "Plot No-A-40, Gali No-4, Rajender Nagar Indl.Area Mohan Nagar, Ghaziabad(UP)-201007",
                 },
               ].map((item) => (
                 <div key={item.label} className="flex items-start gap-3">
