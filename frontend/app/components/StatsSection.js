@@ -28,7 +28,7 @@ export default function StatsSection() {
   const stats = [
     {
       label: 'Properties Listed',
-      value: '1,200+',
+      value: '4+',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round"
@@ -38,7 +38,7 @@ export default function StatsSection() {
     },
     {
       label: 'Cities Covered',
-      value: '15+',
+      value: '2+',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round"
@@ -50,7 +50,7 @@ export default function StatsSection() {
     },
     {
       label: 'Happy Clients',
-      value: '3,500+',
+      value: '100+',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round"
@@ -60,7 +60,7 @@ export default function StatsSection() {
     },
     {
       label: 'Years of Experience',
-      value: '10+',
+      value: '18+',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round"
