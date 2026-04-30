@@ -360,8 +360,12 @@ export default function AboutPage() {
 
             </div>
             <p className="mt-10 max-w-2xl text-lg leading-relaxed md:text-xl" style={{ fontFamily: 'sans-serif', color: 'rgba(160,210,150,0.5)' }}>
-              Parth Estate Mart was founded on a single promise: to be the most trusted name
-              in real estate — where every property is a milestone, and every client is family.
+              Parth Estate Mart—a name of trust, a symbol of confidence.
+Since 2022, we have been building a strong presence in the real estate sector with integrity and transparency.
+After delivering successful farmhouse, plot, and independent house projects,
+today we bring you two exciting opportunities—a premium farmhouse project and a stunning plotting project.
+If you too are looking to acquire the land or farmhouse of your dreams,
+connect with Parth Estate Mart—where every deal is done with trust.”
             </p>
           </div>
         </section>
