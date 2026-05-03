@@ -346,7 +346,7 @@ export default function AboutPage() {
         <section className="relative px-4 pb-12 pt-28 md:pb-20 md:pt-40">
           <div className="container mx-auto max-w-6xl">
             <p className="mb-5 text-xs tracking-[0.35em] uppercase" style={{ fontFamily: 'sans-serif', color: 'rgba(180,210,150,0.6)' }}>
-              Est. 2014 · Trusted Real Estate Advisors
+              Est. 2022 · Trusted Real Estate Advisors
             </p>
             <div className="flex flex-col gap-6">
               <div>
