@@ -11,6 +11,7 @@ import WhyChooseUs from "./components/WhyChooseUs";
 import StatsSection from "./components/StatsSection";
 import CTASection from "./components/CTASection";
 import PropertyVideos from "./components/PropertyVideo";
+import FacebookVideos from "./components/FacebookVideos";
 
 // Server-side fetch (ISR enabled)
 async function getFeaturedProperties() {
@@ -80,6 +81,7 @@ export default async function HomePage() {
         */}
         {/* Propertyvideo section  */}
         <PropertyVideos />
+        <FacebookVideos />
 
         {/* 4. Why Choose Us */}
         <WhyChooseUs />
