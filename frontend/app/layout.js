@@ -2,6 +2,7 @@ import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Script from "next/script";
+import FloatingSocial from "./components/FloatingSocial";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -279,6 +280,7 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className="font-sans antialiased bg-[#0a0a0f] text-white">
+        <FloatingSocial />
         {children}
 
         {/* ── Google Analytics ── */}
