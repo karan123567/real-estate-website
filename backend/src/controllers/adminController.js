@@ -306,7 +306,7 @@ const updateInquiryStatus = async (req, res, next) => {
        SET 
          status = $1, 
          responded_at = CASE 
-           WHEN $1 != 'new' AND responded_at IS NULL 
+           WHEN $1::varchar != 'new' AND responded_at IS NULL 
            THEN NOW() 
            ELSE responded_at 
          END
