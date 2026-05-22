@@ -340,6 +340,7 @@ export default function Footer() {
               {[
                 { icon: "✉️", label: "Email", value: "cschandrahr@gmail.com" },
                 { icon: "📞", label: "Phone", value: "+91 93190 25925" },
+                {icon: "📍", label: "Branch Office", value: "Shop no. 23  first floor, Sector 51 Noida 201303, near Sector 52 Noida Metro Station gate no. 3"},
                 { icon: "📍", label: "Office", value: "Plot No-A-40, Gali No-4, Rajender Nagar Indl.Area Mohan Nagar, Ghaziabad(UP)-201007" },
               ].map((item) => (
                 <div key={item.label} className="flex items-start gap-3">
