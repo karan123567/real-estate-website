@@ -251,9 +251,9 @@ export default function AdminLayout({ children, title }) {
             </div>
             <div>
               <div className="font-cormorant text-[17px] font-semibold tracking-wide text-white">
-                Lux<span className="text-[#C9A96E]">Estate</span>
+                Parth<span className="text-[#C9A96E]">EstateMart</span>
               </div>
-              <div className="text-[9px] tracking-[0.2em] uppercase text-white/20">Admin Portal</div>
+              <div className="text-[9px] tracking-[0.2em] uppercase text-white/20">Chandra Singh</div>
             </div>
           </div>
 
@@ -334,7 +334,7 @@ export default function AdminLayout({ children, title }) {
                   {title}
                 </h1>
                 <p className="hidden text-[10px] text-white/20 sm:block">
-                  LuxEstate Admin Panel
+                  ParthEstateMart Admin Panel
                 </p>
               </div>
             </div>
