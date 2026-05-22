@@ -5,7 +5,8 @@ import {
   getAllInquiries,
   getInquiryById,
   deleteInquiry,
-  getInquiryStats
+  getInquiryStats,
+  updateInquiryStatus
 } from '../controllers/inquiryController.js';
 import { validateInquiry } from '../middleware/validation.js';
 import { authenticateAdmin } from '../middleware/auth.js';
@@ -19,5 +20,6 @@ router.get('/',        authenticateAdmin, getAllInquiries);   // GET /api/inquir
 router.get('/stats',   authenticateAdmin, getInquiryStats);  // GET /api/inquiries/stats?days=30
 router.get('/:id',     authenticateAdmin, getInquiryById);   // GET /api/inquiries/:id
 router.delete('/:id',  authenticateAdmin, deleteInquiry);    // DELETE /api/inquiries/:id
+router.put('/:id/status', authenticateAdmin, updateInquiryStatus); // PUT /api/inquiries/:id/status
 
 export default router;

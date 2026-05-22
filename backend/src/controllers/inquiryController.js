@@ -298,17 +298,72 @@ const getInquiryStats = async (req, res, next) => {
   }
 };
 
+// Add this function to your inquiriesController.js
+// ============================================================
+const updateInquiryStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+ 
+    // ── Validate status value ──────────────────────────────────────────────
+    const VALID_STATUSES = ['new', 'contacted', 'scheduled', 'closed'];
+    if (!status || !VALID_STATUSES.includes(status)) {
+      return res.status(400).json({
+        error: 'Invalid status',
+        message: `Status must be one of: ${VALID_STATUSES.join(', ')}`,
+      });
+    }
+ 
+    // ── Check inquiry exists ───────────────────────────────────────────────
+    const existing = await query(
+      'SELECT id FROM inquiries WHERE id = $1',
+      [id]
+    );
+ 
+    if (existing.rows.length === 0) {
+      return res.status(404).json({
+        error: 'Inquiry not found',
+        message: `No inquiry found with id ${id}`,
+      });
+    }
+ 
+    // ── Update status ──────────────────────────────────────────────────────
+    const { rows } = await query(
+      `UPDATE inquiries
+       SET status = $1, updated_at = NOW()
+       WHERE id = $2
+       RETURNING id, name, email, status, updated_at`,
+      [status, id]
+    );
+ 
+    console.log(`✅ Inquiry ${id} status updated to "${status}"`);
+ 
+    res.json({
+      success: true,
+      message: `Inquiry status updated to ${status}`,
+      inquiry: rows[0],
+    });
+ 
+  } catch (error) {
+    console.error('updateInquiryStatus error:', error);
+    next(error);
+  }
+};
+
+
 export {
   submitInquiry,
   getInquiryById,
   deleteInquiry,
   getInquiryStats,
-  getAllInquiries
+  getAllInquiries,
+  updateInquiryStatus
 };
 export default {
   submitInquiry,
   getInquiryById,
   deleteInquiry,
   getInquiryStats,
-  getAllInquiries
+  getAllInquiries,
+  updateInquiryStatus
 };
