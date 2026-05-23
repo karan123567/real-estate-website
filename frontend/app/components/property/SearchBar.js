@@ -93,32 +93,61 @@
 //   );
 // }
 
-
 'use client';
 
-// PURPOSE: Property search bar — city/title search
-
-// ✅ Bug 1 fixed: added useEffect to imports
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function SearchBar({ initialValue = '', onSearch }) {
+// ✅ Fix: removed onSearch prop — Server Components can't pass functions
+// ✅ Fix: uses baseFilters prop (which IS passed) to navigate with URL params
+export default function SearchBar({ initialValue = '', baseFilters = {} }) {
+  const router = useRouter();
   const [city, setCity] = useState(initialValue);
 
-  // ✅ Bug 2 fixed: sync state when initialValue changes (e.g. from URL params)
+  // ✅ Sync if initialValue changes (e.g. browser back button)
   useEffect(() => {
     setCity(initialValue);
   }, [initialValue]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onSearch) onSearch(city.trim());
+
+    // Build URL preserving all existing filters, just updating city
+    const params = new URLSearchParams();
+
+    // Keep all existing filters
+    if (baseFilters.propertyType) params.set('propertyType', baseFilters.propertyType);
+    if (baseFilters.listingType)  params.set('listingType',  baseFilters.listingType);
+    if (baseFilters.minPrice)     params.set('minPrice',     baseFilters.minPrice);
+    if (baseFilters.maxPrice)     params.set('maxPrice',     baseFilters.maxPrice);
+    if (baseFilters.bedrooms)     params.set('bedrooms',     baseFilters.bedrooms);
+    if (baseFilters.sortBy)       params.set('sortBy',       baseFilters.sortBy);
+
+    // Set new city value (or remove if empty)
+    const trimmed = city.trim();
+    if (trimmed) params.set('city', trimmed);
+
+    // Reset to page 1 on new search
+    params.set('page', '1');
+
+    router.push(`/properties?${params.toString()}`);
   };
 
-  // ✅ Bug 3 fixed: reset results when input is cleared
+  // ✅ Clear search resets results immediately
   const handleChange = (e) => {
     const val = e.target.value;
     setCity(val);
-    if (val === '' && onSearch) onSearch('');
+    if (val === '') {
+      const params = new URLSearchParams();
+      if (baseFilters.propertyType) params.set('propertyType', baseFilters.propertyType);
+      if (baseFilters.listingType)  params.set('listingType',  baseFilters.listingType);
+      if (baseFilters.minPrice)     params.set('minPrice',     baseFilters.minPrice);
+      if (baseFilters.maxPrice)     params.set('maxPrice',     baseFilters.maxPrice);
+      if (baseFilters.bedrooms)     params.set('bedrooms',     baseFilters.bedrooms);
+      if (baseFilters.sortBy)       params.set('sortBy',       baseFilters.sortBy);
+      params.set('page', '1');
+      router.push(`/properties?${params.toString()}`);
+    }
   };
 
   return (
@@ -126,7 +155,6 @@ export default function SearchBar({ initialValue = '', onSearch }) {
       onSubmit={handleSubmit}
       className="flex flex-col sm:flex-row gap-3 w-full max-w-2xl"
     >
-      {/* Input */}
       <div className="relative flex-1">
         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
@@ -141,7 +169,7 @@ export default function SearchBar({ initialValue = '', onSearch }) {
           type="text"
           placeholder="Search by city — Noida, Greater Noida, Ghaziabad..."
           value={city}
-          onChange={handleChange}  /* ✅ Bug 3 fixed: was inline onChange */
+          onChange={handleChange}
           className="w-full pl-10 pr-4 py-3.5 rounded-xl text-sm text-gray-900
                      bg-white/95 backdrop-blur-sm border border-white/20
                      focus:outline-none focus:ring-2 focus:ring-amber-400/50
@@ -150,7 +178,6 @@ export default function SearchBar({ initialValue = '', onSearch }) {
         />
       </div>
 
-      {/* Button */}
       <button
         type="submit"
         className="px-7 py-3.5 rounded-xl font-semibold text-sm text-white

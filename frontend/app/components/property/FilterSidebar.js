@@ -159,11 +159,171 @@
 // // ✅ Attach AFTER both functions are defined
 // // FilterSidebar.SortDropdown = SortDropdown;
 
+// 'use client';
+
+// // PURPOSE: Filter sidebar for properties listing page
+
+// import { useState, useEffect } from 'react';
+
+// const selectClass = `w-full border border-amber-100 rounded-xl px-3 py-2.5 text-sm
+//   text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400/40
+//   focus:border-amber-400 transition-colors cursor-pointer`;
+
+// const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2";
+
+// export default function FilterSidebar({ filters, onFilterChange }) {
+//   const [localFilters, setLocalFilters] = useState(filters);
+
+//   useEffect(() => {
+//     setLocalFilters(filters);
+//   }, [filters]);
+
+//   const handleChange = (key, value) => {
+//     setLocalFilters((prev) => ({ ...prev, [key]: value }));
+//   };
+
+//   const handleApply = () => {
+//     onFilterChange?.(localFilters);
+//   };
+
+//   const handleClear = () => {
+//     const cleared = {
+//       city: '', propertyType: '', listingType: '',
+//       minPrice: '', maxPrice: '', bedrooms: '', sortBy: '',
+//     };
+//     setLocalFilters(cleared);
+//     onFilterChange?.(cleared);
+//   };
+
+//   const hasActive = localFilters.listingType || localFilters.propertyType ||
+//     localFilters.minPrice || localFilters.maxPrice || localFilters.bedrooms;
+
+//   return (
+//     <div className="bg-white rounded-2xl border border-amber-100/60 overflow-hidden"
+//          style={{ boxShadow: '0 4px 24px rgba(180,140,80,0.08)' }}>
+
+//       {/* Header */}
+//       <div className="px-6 py-4 border-b border-amber-100/60 flex items-center justify-between"
+//            style={{ background: 'linear-gradient(135deg, #fef9f0, #fdf3e0)' }}>
+//         <div className="flex items-center gap-2">
+//           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
+//                className="w-4 h-4 text-amber-600">
+//             <path strokeLinecap="round" strokeLinejoin="round"
+//               d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+//           </svg>
+//           <h3 className="font-semibold text-gray-900 text-sm">Filters</h3>
+//         </div>
+//         {hasActive && (
+//           <span className="text-xs px-2 py-0.5 rounded-full font-medium text-amber-700"
+//                 style={{ background: 'rgba(201,169,110,0.2)' }}>
+//             Active
+//           </span>
+//         )}
+//       </div>
+
+//       <div className="p-6 space-y-5">
+
+//         {/* Listing Type */}
+//         <div>
+//           <label className={labelClass}>Listing Type</label>
+//           <select value={localFilters.listingType}
+//                   onChange={(e) => handleChange('listingType', e.target.value)}
+//                   className={selectClass}>
+//             <option value="">All</option>
+//             <option value="sale">Buy</option>
+//             <option value="rent">Rent</option>
+//           </select>
+//         </div>
+
+//         {/* Property Type */}
+//         <div>
+//           <label className={labelClass}>Property Type</label>
+//           <select value={localFilters.propertyType}
+//                   onChange={(e) => handleChange('propertyType', e.target.value)}
+//                   className={selectClass}>
+//             <option value="">All</option>
+//             <option value="apartment">Apartment</option>
+//             <option value="house">House</option>
+//             <option value="villa">Villa</option>
+//             <option value="commercial">Commercial</option>
+//           </select>
+//         </div>
+
+//         {/* Price Range */}
+//         <div>
+//           <label className={labelClass}>Price Range (₹)</label>
+//           <div className="flex gap-2">
+//             <input
+//               type="number"
+//               placeholder="Min"
+//               value={localFilters.minPrice}
+//               onChange={(e) => handleChange('minPrice', e.target.value)}
+//               className="w-1/2 border border-amber-100 rounded-xl px-3 py-2.5 text-sm
+//                          text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40
+//                          focus:border-amber-400 transition-colors"
+//             />
+//             <input
+//               type="number"
+//               placeholder="Max"
+//               value={localFilters.maxPrice}
+//               onChange={(e) => handleChange('maxPrice', e.target.value)}
+//               className="w-1/2 border border-amber-100 rounded-xl px-3 py-2.5 text-sm
+//                          text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40
+//                          focus:border-amber-400 transition-colors"
+//             />
+//           </div>
+//         </div>
+
+//         {/* Bedrooms */}
+//         <div>
+//           <label className={labelClass}>Bedrooms</label>
+//           <select value={localFilters.bedrooms}
+//                   onChange={(e) => handleChange('bedrooms', e.target.value)}
+//                   className={selectClass}>
+//             <option value="">Any</option>
+//             <option value="1">1 BHK</option>
+//             <option value="2">2 BHK</option>
+//             <option value="3">3 BHK</option>
+//             <option value="4">4+ BHK</option>
+//           </select>
+//         </div>
+
+//         {/* Buttons */}
+//         <div className="pt-4 border-t border-amber-100/60 space-y-2.5">
+//           <button
+//             onClick={handleApply}
+//             className="w-full py-3 rounded-xl font-semibold text-sm text-white
+//                        transition-all duration-300 hover:-translate-y-0.5
+//                        hover:shadow-[0_0_20px_rgba(201,169,110,0.35)]"
+//             style={{ background: 'linear-gradient(135deg, #c9a96e, #b8854a)' }}
+//           >
+//             Apply Filters
+//           </button>
+
+//           {hasActive && (
+//             <button
+//               onClick={handleClear}
+//               className="w-full py-2.5 rounded-xl text-sm font-medium text-gray-500
+//                          border border-gray-200 hover:border-gray-300 hover:text-gray-700
+//                          transition-colors duration-200"
+//             >
+//               Clear Filters
+//             </button>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
 'use client';
 
 // PURPOSE: Filter sidebar for properties listing page
+// ✅ Fixed: uses useRouter for navigation — no callback needed from Server Component parent
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const selectClass = `w-full border border-amber-100 rounded-xl px-3 py-2.5 text-sm
   text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400/40
@@ -171,9 +331,12 @@ const selectClass = `w-full border border-amber-100 rounded-xl px-3 py-2.5 text-
 
 const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2";
 
-export default function FilterSidebar({ filters, onFilterChange }) {
+export default function FilterSidebar({ filters }) {
+  // ✅ Bug 1 fixed: removed onFilterChange prop — Server Components can't pass functions
+  const router = useRouter();
   const [localFilters, setLocalFilters] = useState(filters);
 
+  // Sync if server-side filters change (e.g. browser back/forward)
   useEffect(() => {
     setLocalFilters(filters);
   }, [filters]);
@@ -182,29 +345,57 @@ export default function FilterSidebar({ filters, onFilterChange }) {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  // ✅ Bug 2 fixed: Apply now navigates via URL params
   const handleApply = () => {
-    onFilterChange?.(localFilters);
+    const params = new URLSearchParams();
+
+    if (localFilters.city)         params.set('city',         localFilters.city);
+    if (localFilters.listingType)  params.set('listingType',  localFilters.listingType);
+    if (localFilters.propertyType) params.set('propertyType', localFilters.propertyType);
+    if (localFilters.minPrice)     params.set('minPrice',     localFilters.minPrice);
+    if (localFilters.maxPrice)     params.set('maxPrice',     localFilters.maxPrice);
+    if (localFilters.bedrooms)     params.set('bedrooms',     localFilters.bedrooms);
+    if (localFilters.sortBy)       params.set('sortBy',       localFilters.sortBy);
+
+    // Always reset to page 1 when filters change
+    params.set('page', '1');
+
+    router.push(`/properties?${params.toString()}`);
   };
 
+  // ✅ Bug 2 fixed: Clear now navigates to clean URL
   const handleClear = () => {
     const cleared = {
       city: '', propertyType: '', listingType: '',
       minPrice: '', maxPrice: '', bedrooms: '', sortBy: '',
     };
     setLocalFilters(cleared);
-    onFilterChange?.(cleared);
+
+    // Keep only city if it was set (search term stays, filters clear)
+    const params = new URLSearchParams();
+    if (filters.city) params.set('city', filters.city);
+    params.set('page', '1');
+
+    router.push(`/properties?${params.toString()}`);
   };
 
-  const hasActive = localFilters.listingType || localFilters.propertyType ||
-    localFilters.minPrice || localFilters.maxPrice || localFilters.bedrooms;
+  const hasActive =
+    localFilters.listingType  ||
+    localFilters.propertyType ||
+    localFilters.minPrice     ||
+    localFilters.maxPrice     ||
+    localFilters.bedrooms;
 
   return (
-    <div className="bg-white rounded-2xl border border-amber-100/60 overflow-hidden"
-         style={{ boxShadow: '0 4px 24px rgba(180,140,80,0.08)' }}>
-
+    <div
+      className="bg-white rounded-2xl border border-amber-100/60 overflow-hidden"
+      style={{ boxShadow: '0 4px 24px rgba(180,140,80,0.08)' }}
+    >
       {/* Header */}
-      <div className="px-6 py-4 border-b border-amber-100/60 flex items-center justify-between"
-           style={{ background: 'linear-gradient(135deg, #fef9f0, #fdf3e0)' }}>
+      <div
+        className="px-6 py-4 border-b border-amber-100/60 flex items-center justify-between"
+        style={{ background: 'linear-gradient(135deg, #fef9f0, #fdf3e0)' }}
+      >
         <div className="flex items-center gap-2">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
                className="w-4 h-4 text-amber-600">
@@ -214,8 +405,10 @@ export default function FilterSidebar({ filters, onFilterChange }) {
           <h3 className="font-semibold text-gray-900 text-sm">Filters</h3>
         </div>
         {hasActive && (
-          <span className="text-xs px-2 py-0.5 rounded-full font-medium text-amber-700"
-                style={{ background: 'rgba(201,169,110,0.2)' }}>
+          <span
+            className="text-xs px-2 py-0.5 rounded-full font-medium text-amber-700"
+            style={{ background: 'rgba(201,169,110,0.2)' }}
+          >
             Active
           </span>
         )}
@@ -226,9 +419,11 @@ export default function FilterSidebar({ filters, onFilterChange }) {
         {/* Listing Type */}
         <div>
           <label className={labelClass}>Listing Type</label>
-          <select value={localFilters.listingType}
-                  onChange={(e) => handleChange('listingType', e.target.value)}
-                  className={selectClass}>
+          <select
+            value={localFilters.listingType}
+            onChange={(e) => handleChange('listingType', e.target.value)}
+            className={selectClass}
+          >
             <option value="">All</option>
             <option value="sale">Buy</option>
             <option value="rent">Rent</option>
@@ -238,13 +433,18 @@ export default function FilterSidebar({ filters, onFilterChange }) {
         {/* Property Type */}
         <div>
           <label className={labelClass}>Property Type</label>
-          <select value={localFilters.propertyType}
-                  onChange={(e) => handleChange('propertyType', e.target.value)}
-                  className={selectClass}>
-            <option value="">All</option>
-            <option value="apartment">Apartment</option>
+          <select
+            value={localFilters.propertyType}
+            onChange={(e) => handleChange('propertyType', e.target.value)}
+            className={selectClass}
+          >
+            <option value="">All Types</option>
+            <option value="apartment">Apartment / Flat</option>
             <option value="house">House</option>
             <option value="villa">Villa</option>
+            {/* ✅ Bug 3 fixed: added Parth Estate Mart's core listing types */}
+            <option value="land">Plot / Land</option>
+            <option value="farm">Farm Land</option>
             <option value="commercial">Commercial</option>
           </select>
         </div>
@@ -277,9 +477,11 @@ export default function FilterSidebar({ filters, onFilterChange }) {
         {/* Bedrooms */}
         <div>
           <label className={labelClass}>Bedrooms</label>
-          <select value={localFilters.bedrooms}
-                  onChange={(e) => handleChange('bedrooms', e.target.value)}
-                  className={selectClass}>
+          <select
+            value={localFilters.bedrooms}
+            onChange={(e) => handleChange('bedrooms', e.target.value)}
+            className={selectClass}
+          >
             <option value="">Any</option>
             <option value="1">1 BHK</option>
             <option value="2">2 BHK</option>
@@ -288,7 +490,7 @@ export default function FilterSidebar({ filters, onFilterChange }) {
           </select>
         </div>
 
-        {/* Buttons */}
+        {/* Action Buttons */}
         <div className="pt-4 border-t border-amber-100/60 space-y-2.5">
           <button
             onClick={handleApply}
