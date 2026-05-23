@@ -338,12 +338,103 @@ const updateInquiryStatus = async (req, res, next) => {
 // ============================================================
 // GET /api/admin/analytics - Analytics overview
 // ============================================================
+// const getAnalytics = async (req, res, next) => {
+//   try {
+//     const days = Math.min(365, Math.max(1, parseInt(req.query.days) || 30));
+
+//     const [visitorsResult, topPropertiesResult, searchesResult, conversionResult] = await Promise.all([
+//       // Visitors over time
+//       query(`
+//         SELECT 
+//           DATE(first_visit) as date,
+//           COUNT(DISTINCT session_id) as visitors,
+//           COUNT(DISTINCT CASE WHEN is_returning = true THEN session_id END) as returning_visitors
+//         FROM visitor_sessions
+//         WHERE first_visit > NOW() - INTERVAL '${days} days'
+//         GROUP BY DATE(first_visit)
+//         ORDER BY date ASC
+//       `),
+      
+//       // Top viewed properties
+//       query(`
+//         SELECT 
+//           p.id, 
+//           p.title, 
+//           p.city, 
+//           p.price,
+//           COUNT(pv.id) as view_count,
+//           COUNT(DISTINCT pv.session_id) as unique_visitors
+//         FROM properties p
+//         LEFT JOIN property_views pv ON p.id = pv.property_id
+//           AND pv.viewed_at > NOW() - INTERVAL '${days} days'
+//         GROUP BY p.id, p.title, p.city, p.price
+//         HAVING COUNT(pv.id) > 0
+//         ORDER BY view_count DESC
+//         LIMIT 10
+//       `),
+      
+//       // Top search queries
+//       query(`
+//         SELECT 
+//           search_query, 
+//           COUNT(*) as count,
+//           AVG(results_count) as avg_results
+//         FROM search_logs
+//         WHERE searched_at > NOW() - INTERVAL '${days} days'
+//           AND search_query IS NOT NULL
+//           AND search_query != ''
+//         GROUP BY search_query
+//         ORDER BY count DESC
+//         LIMIT 10
+//       `),
+
+//       // Conversion rate
+//       query(`
+//         SELECT 
+//           COUNT(DISTINCT vs.session_id) as total_visitors,
+//           COUNT(DISTINCT i.id) as total_inquiries,
+//           ROUND(
+//             (COUNT(DISTINCT i.id)::numeric / NULLIF(COUNT(DISTINCT vs.session_id), 0)) * 100, 
+//             2
+//           ) as conversion_rate
+//         FROM visitor_sessions vs
+//         LEFT JOIN inquiries i ON DATE(i.created_at) = DATE(vs.first_visit)
+//         WHERE vs.first_visit > NOW() - INTERVAL '${days} days'
+//       `)
+//     ]);
+
+//     res.json({
+//       success: true,
+//       period: `${days} days`,
+//       visitorsOverTime: visitorsResult.rows || [],
+//       topProperties: topPropertiesResult.rows || [],
+//       topSearches: searchesResult.rows || [],
+//       conversion: conversionResult.rows[0] || {
+//         total_visitors: 0,
+//         total_inquiries: 0,
+//         conversion_rate: 0
+//       }
+//     });
+
+//   } catch (error) {
+//     console.error('getAnalytics error:', error);
+//     next(error);
+//   }
+// };
+
 const getAnalytics = async (req, res, next) => {
   try {
     const days = Math.min(365, Math.max(1, parseInt(req.query.days) || 30));
-
-    const [visitorsResult, topPropertiesResult, searchesResult, conversionResult] = await Promise.all([
-      // Visitors over time
+ 
+    const [
+      visitorsOverTimeResult,
+      visitorsSummaryResult,    // ✅ NEW: summary object for stat cards
+      topPropertiesResult,
+      searchesResult,
+      conversionResult,
+    ] = await Promise.all([
+ 
+      // 1. Visitors per day (for the chart)
       query(`
         SELECT 
           DATE(first_visit) as date,
@@ -354,31 +445,41 @@ const getAnalytics = async (req, res, next) => {
         GROUP BY DATE(first_visit)
         ORDER BY date ASC
       `),
-      
-      // Top viewed properties
+ 
+      // 2. ✅ NEW: Visitors summary totals for stat cards
       query(`
         SELECT 
-          p.id, 
-          p.title, 
-          p.city, 
+          COUNT(DISTINCT session_id) as total,
+          COUNT(DISTINCT CASE WHEN is_returning = true THEN session_id END) as returning
+        FROM visitor_sessions
+        WHERE first_visit > NOW() - INTERVAL '${days} days'
+      `),
+ 
+      // 3. Top properties — ✅ added avg_time_spent
+      query(`
+        SELECT 
+          p.id,
+          p.title,
+          p.city,
           p.price,
           COUNT(pv.id) as view_count,
-          COUNT(DISTINCT pv.session_id) as unique_visitors
+          COUNT(DISTINCT pv.session_id) as unique_visitors,
+          AVG(pv.time_spent) as avg_time_spent
         FROM properties p
         LEFT JOIN property_views pv ON p.id = pv.property_id
           AND pv.viewed_at > NOW() - INTERVAL '${days} days'
+        WHERE pv.id IS NOT NULL
         GROUP BY p.id, p.title, p.city, p.price
-        HAVING COUNT(pv.id) > 0
         ORDER BY view_count DESC
         LIMIT 10
       `),
-      
-      // Top search queries
+ 
+      // 4. Top searches
       query(`
         SELECT 
-          search_query, 
+          search_query,
           COUNT(*) as count,
-          AVG(results_count) as avg_results
+          AVG(results_count)::int as avg_results
         FROM search_logs
         WHERE searched_at > NOW() - INTERVAL '${days} days'
           AND search_query IS NOT NULL
@@ -387,35 +488,49 @@ const getAnalytics = async (req, res, next) => {
         ORDER BY count DESC
         LIMIT 10
       `),
-
-      // Conversion rate
+ 
+      // 5. Conversion rate
       query(`
         SELECT 
           COUNT(DISTINCT vs.session_id) as total_visitors,
           COUNT(DISTINCT i.id) as total_inquiries,
           ROUND(
-            (COUNT(DISTINCT i.id)::numeric / NULLIF(COUNT(DISTINCT vs.session_id), 0)) * 100, 
+            (COUNT(DISTINCT i.id)::numeric / NULLIF(COUNT(DISTINCT vs.session_id), 0)) * 100,
             2
           ) as conversion_rate
         FROM visitor_sessions vs
         LEFT JOIN inquiries i ON DATE(i.created_at) = DATE(vs.first_visit)
         WHERE vs.first_visit > NOW() - INTERVAL '${days} days'
-      `)
+      `),
     ]);
-
+ 
+    const conv = conversionResult.rows[0] || {};
+ 
     res.json({
       success: true,
       period: `${days} days`,
-      visitorsOverTime: visitorsResult.rows || [],
+ 
+      // ✅ NEW: visitors summary object — matches frontend stat cards
+      visitors: {
+        total:     parseInt(visitorsSummaryResult.rows[0]?.total)     || 0,
+        returning: parseInt(visitorsSummaryResult.rows[0]?.returning) || 0,
+      },
+ 
+      // ✅ FIXED: consistent field names for frontend
+      conversion: {
+        rate:      parseFloat(conv.conversion_rate) || 0,
+        visitors:  parseInt(conv.total_visitors)    || 0,
+        inquiries: parseInt(conv.total_inquiries)   || 0,
+      },
+ 
+      // Chart data
+      visitorsOverTime: visitorsOverTimeResult.rows || [],
+ 
+      // Tables
       topProperties: topPropertiesResult.rows || [],
-      topSearches: searchesResult.rows || [],
-      conversion: conversionResult.rows[0] || {
-        total_visitors: 0,
-        total_inquiries: 0,
-        conversion_rate: 0
-      }
+      topSearches:   searchesResult.rows       || [],
     });
-
+ 
   } catch (error) {
     console.error('getAnalytics error:', error);
     next(error);
