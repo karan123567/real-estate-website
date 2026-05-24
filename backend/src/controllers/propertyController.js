@@ -339,7 +339,7 @@ const getPropertyById = async (req, res, next) => {
 
     // Increment view counter (fire and forget, don't wait)
     query(
-      'UPDATE properties SET views_count = views_count + 1 WHERE id = $1',
+      'UPDATE properties SET view_count = view_count + 1 WHERE id = $1',
       [id]
     ).catch(err => console.error('View count update failed:', err));
 
