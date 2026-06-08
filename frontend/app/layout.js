@@ -34,6 +34,7 @@ const KEYWORDS = [
   "best property in Noida",
   "Noida property best",
   "buy flat in Noida",
+  "property for sale in Noida",
   "flats for sale in Noida",
   "2BHK in Noida",
   "3BHK in Noida",
