@@ -2,8 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict QGEocdcAYLAboDj8AXSmT5GWWINGge05H4MxLj8GWOQSwBJrx4hbDh4sViocwE4
-
 -- Dumped from database version 17.0
 -- Dumped by pg_dump version 18.2
 
@@ -715,6 +713,4 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT ALL ON TABLES 
 --
 -- PostgreSQL database dump complete
 --
-
-\unrestrict QGEocdcAYLAboDj8AXSmT5GWWINGge05H4MxLj8GWOQSwBJrx4hbDh4sViocwE4
 
