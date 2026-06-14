@@ -40,66 +40,65 @@ import PropertyCard from './property/PropertyCard';
 // ─── MOCK DATA ────────────────────────────────────────────────────────────────
 // TODO (backend): Remove this block and pass real `properties` prop instead
 // Images: replace with Cloudinary URLs — structure: [{ url: '...', isPrimary: true }]
-// const MOCK_PROPERTIES = [
-//   {
-//     id: '1',
-//     title: 'Luxury Sea-View Villa with Private Pool',
-//     price: 45000000,
-//     listing_type: 'sale',
-//     city: 'Goa',
-//     state: 'Goa',
-//     bedrooms: 5,
-//     bathrooms: 4,
-//     area_sqft: 4200,
-//     featured: true,
-//     published_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-//     // ✅ Using local public image — add villa.jpg to /public/assets/images/mock/
-//     images: [{ url: '/assets/images/villa-1.jpg', isPrimary: true }],
-//   },
-//   {
-//     id: '2',
-//     title: 'Modern High-Rise Apartment in South Mumbai',
-//     price: 28000000,
-//     listing_type: 'sale',
-//     city: 'Mumbai',
-//     state: 'Maharashtra',
-//     bedrooms: 3,
-//     bathrooms: 2,
-//     area_sqft: 1850,
-//     featured: true,
-//     published_at: new Date(Date.now() - 5 * 86400000).toISOString(),
-//     images: [{ url: '/assets/images/villa-2.jpg', isPrimary: true }],
-//   },
-//   {
-//     id: '3',
-//     title: 'Heritage Bungalow with Landscaped Garden',
-//     price: 75000,
-//     listing_type: 'rent',
-//     city: 'Bengaluru',
-//     state: 'Karnataka',
-//     bedrooms: 4,
-//     bathrooms: 3,
-//     area_sqft: 3100,
-//     featured: false,
-//     published_at: new Date(Date.now() - 1 * 86400000).toISOString(),
-//     images: [{ url: '/assets/images/villa-3.jpg', isPrimary: true }],
-//   },
-//   {
-//     id: '4',
-//     title: 'Contemporary Penthouse with City Skyline Views',
-//     price: 62000000,
-//     listing_type: 'sale',
-//     city: 'Delhi',
-//     state: 'Delhi NCR',
-//     bedrooms: 4,
-//     bathrooms: 4,
-//     area_sqft: 5500,
-//     featured: true,
-//     published_at: new Date(Date.now() - 10 * 86400000).toISOString(),
-//     images: [{ url: '/assets/images/villa-4.jpg', isPrimary: true }],
-//   },
-// ];
-// ─────────────────────────────────────────────────────────────────────────────
+const MOCK_PROPERTIES = [
+  {
+    id: '1',
+    title: 'Luxury Sea-View Villa with Private Pool',
+    price: 45000000,
+    listing_type: 'sale',
+    city: 'Goa',
+    state: 'Goa',
+    bedrooms: 5,
+    bathrooms: 4,
+    area_sqft: 4200,
+    featured: true,
+    published_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    // ✅ Using local public image — add villa.jpg to /public/assets/images/mock/
+    images: [{ url: '/assets/images/villa-1.jpg', isPrimary: true }],
+  },
+  {
+    id: '2',
+    title: 'Modern High-Rise Apartment in South Mumbai',
+    price: 28000000,
+    listing_type: 'sale',
+    city: 'Mumbai',
+    state: 'Maharashtra',
+    bedrooms: 3,
+    bathrooms: 2,
+    area_sqft: 1850,
+    featured: true,
+    published_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+    images: [{ url: '/assets/images/villa-2.jpg', isPrimary: true }],
+  },
+  {
+    id: '3',
+    title: 'Heritage Bungalow with Landscaped Garden',
+    price: 75000,
+    listing_type: 'rent',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    bedrooms: 4,
+    bathrooms: 3,
+    area_sqft: 3100,
+    featured: false,
+    published_at: new Date(Date.now() - 1 * 86400000).toISOString(),
+    images: [{ url: '/assets/images/villa-3.jpg', isPrimary: true }],
+  },
+  {
+    id: '4',
+    title: 'Contemporary Penthouse with City Skyline Views',
+    price: 62000000,
+    listing_type: 'sale',
+    city: 'Delhi',
+    state: 'Delhi NCR',
+    bedrooms: 4,
+    bathrooms: 4,
+    area_sqft: 5500,
+    featured: true,
+    published_at: new Date(Date.now() - 10 * 86400000).toISOString(),
+    images: [{ url: '/assets/images/villa-4.jpg', isPrimary: true }],
+  },
+];
 
 const FEATURED_LIMIT = 4;
 
@@ -108,7 +107,7 @@ export default function FeaturedProperties({ properties }) {
   const data =
     Array.isArray(properties) && properties.length > 0
       ? properties
-      : "We couldn't find any featured properties at the moment. Please check back later or explore our full listings for more options.";
+      : MOCK_PROPERTIES;
 
   const visible = data.slice(0, FEATURED_LIMIT);
   const showViewAll = data.length > FEATURED_LIMIT;
