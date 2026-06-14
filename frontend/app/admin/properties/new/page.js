@@ -98,7 +98,7 @@ export default function AddProperty() {
         price: parseFloat(formData.price),
         bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
         bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
-        areaSqyd: formData.areaSqft ? parseFloat(formData.areaSqft) : undefined,
+        areaSqft: formData.areaSqft ? parseFloat(formData.areaSqft) : undefined,
         yearBuilt: formData.yearBuilt ? parseInt(formData.yearBuilt) : undefined,
       };
 
