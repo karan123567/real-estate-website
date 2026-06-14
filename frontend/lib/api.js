@@ -595,6 +595,12 @@ export const adminAPI = {
   getPropertyAnalytics: async (id, days = 30) => {
     return apiFetch(`/api/admin/analytics/properties/${id}?days=${days}`);
   },
+
+  // ✅ Get ALL properties for admin (no status filter)
+  getProperties: async (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    return apiFetch(`/api/admin/properties${queryString ? `?${queryString}` : ''}`);
+  },
 };
 
 // ============================================================

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 const router = Router();
-import { login, logout, getMe, getDashboard, getInquiries, updateInquiryStatus, getAnalytics } from '../controllers/adminController.js';
+// import { login, logout, getMe, getDashboard, getInquiries, updateInquiryStatus, getAnalytics } from '../controllers/adminController.js';
+import { login, logout, getMe, getDashboard, getInquiries, updateInquiryStatus, getAnalytics, getAllPropertiesAdmin } from '../controllers/adminController.js';
 import { authenticateAdmin } from '../middleware/auth.js';
 import { validateLogin } from '../middleware/validation.js';
 import { loginLimiter } from '../middleware/rateLimiter.js';
@@ -40,5 +41,5 @@ router.get('/dashboard', authenticateAdmin, getDashboard);
 router.get('/inquiries', authenticateAdmin, getInquiries);
 router.put('/inquiries/:id/status', authenticateAdmin, updateInquiryStatus);
 router.get('/analytics', authenticateAdmin, getAnalytics);
-
+router.get('/properties', authenticateAdmin, getAllPropertiesAdmin);
 export default router;

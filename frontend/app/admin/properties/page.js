@@ -22,7 +22,8 @@ export default function AdminProperties() {
     try {
       setLoading(true);
       const params = filter !== "all" ? { status: filter } : {};
-      const data = await propertyAPI.getAll(params);
+      // const data = await propertyAPI.getAll(params);
+      const data = await adminAPI.getProperties(params);
       setProperties(data.properties || []);
     } catch (error) {
       toast.error("Failed to load Properties");
