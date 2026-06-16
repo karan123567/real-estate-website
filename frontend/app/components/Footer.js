@@ -322,7 +322,7 @@ export default function Footer() {
           <div>
             <h4 className="mb-5 text-[10px] tracking-[0.25em] uppercase font-semibold text-blue-500">Property Types</h4>
             <ul className="space-y-3">
-              {["Apartments", "Independent Houses", "Villas", "Commercial", "Plots"].map((t) => (
+              {["Farmhouse & Farmland","Apartments", "Independent Houses", "Villas", "Commercial", "Plots"].map((t) => (
                 <li key={t}>
                   <Link href={`/properties?propertyType=${t.toLowerCase().replace(" ", "_")}`} className="group flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-blue-800">
                     <span className="h-px w-3 rounded-full bg-blue-300 transition-all duration-300 group-hover:w-5 group-hover:bg-blue-500" />
