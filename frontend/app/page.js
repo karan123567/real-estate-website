@@ -81,7 +81,7 @@ export default async function HomePage() {
         */}
         {/* Propertyvideo section  */}
         <PropertyVideos />
-        <FacebookVideos />
+        {/* <FacebookVideos /> */}
 
         {/* 4. Why Choose Us */}
         <WhyChooseUs />

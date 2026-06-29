@@ -13,7 +13,7 @@ import { useState, useEffect, useRef } from "react";
 const FB_VIDEOS = [
   {
     id: "fbv1",
-    url: "https://www.facebook.com/share/18gnmhXaUY/", // ← replace with real video URL
+    url: "https://www.facebook.com/reel/2816245495396730/?mibextid=9drbnH&s=yWDuG2&fs=e/", // ← replace with real video URL
     title: "Property Tour — Noida",
     location: "Noida, UP",
     type: "Property Tour",

@@ -100,7 +100,7 @@ const MOCK_PROPERTIES = [
   },
 ];
 
-const FEATURED_LIMIT = 4;
+const FEATURED_LIMIT = 10;
 
 export default function FeaturedProperties({ properties }) {
   // Use real data if passed from backend, else fall back to mock for preview
