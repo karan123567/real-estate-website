@@ -407,7 +407,7 @@ export default function PropertyDetailClient({ property }) {
                                transition-all hover:border-[#C9A96E]/30 hover:text-[#C9A96E]"
                   >
                     <Phone className="h-4 w-4" />
-                    Call Agent Now
+                    Call Owner Now
                   </a>
                 </div>
 
