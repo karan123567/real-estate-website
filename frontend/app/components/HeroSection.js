@@ -1,11 +1,208 @@
+// "use client";
+
+// import Link from "next/link";
+// import { useEffect, useState } from "react";
+
+// // ── SLIDESHOW IMAGES ───────────────────────────────────────────────────────
+// // Replace these src paths with your actual property images.
+// // Recommended: 1920×1080 or wider JPEGs/WebPs for best quality.
+// const SLIDES = [
+//   {
+//     src: "/assets/images/farmhouse image2.jpeg",
+//     alt: "Luxury villa with pool",
+//   },
+//   {
+//     src: "/assets/images/farmhouse image1.jpeg",
+//     alt: "Modern apartment skyline view",
+//   },
+//   // {
+//   //   src: "/assets/images/slide-3.jpg",
+//   //   alt: "Premium commercial space",
+//   // },
+//   // {
+//   //   src: "/assets/images/slide-4.jpg",
+//   //   alt: "Elegant plot with garden",
+//   // },
+// ];
+
+// const SLIDE_INTERVAL = 5000; // ms between transitions
+
+// export default function HeroSection() {
+//   const [current, setCurrent] = useState(0);
+//   const [prev, setPrev] = useState(null);
+//   const [animating, setAnimating] = useState(false);
+
+//   // Auto-advance
+//   useEffect(() => {
+//     const timer = setInterval(
+//       () => goTo((current + 1) % SLIDES.length),
+//       SLIDE_INTERVAL,
+//     );
+//     return () => clearInterval(timer);
+//   }, [current]);
+
+//   function goTo(index) {
+//     if (animating || index === current) return;
+//     setPrev(current);
+//     setCurrent(index);
+//     setAnimating(true);
+//     setTimeout(() => {
+//       setPrev(null);
+//       setAnimating(false);
+//     }, 900); // must match CSS transition duration
+//   }
+
+//   return (
+//     <section
+//       className="relative overflow-hidden text-white"
+//       style={{ minHeight: "100svh" }}
+//     >
+//       {/* ── SLIDESHOW IMAGES ─────────────────────────────────────────────── */}
+//       {SLIDES.map((slide, i) => {
+//         const isActive = i === current;
+//         const isPrev = i === prev;
+//         return (
+//           <img
+//             key={slide.src}
+//             src={slide.src}
+//             alt={slide.alt}
+//             draggable={false}
+//             className="absolute inset-0 w-full h-full object-cover select-none"
+//             style={{
+//               zIndex: isActive ? 2 : isPrev ? 1 : 0,
+//               opacity: isActive ? 1 : 0,
+//               transform: isActive
+//                 ? "scale(1.04)"
+//                 : isPrev
+//                   ? "scale(1)"
+//                   : "scale(1.04)",
+//               transition: isActive
+//                 ? "opacity 0.9s ease, transform 6s ease"
+//                 : isPrev
+//                   ? "opacity 0.9s ease"
+//                   : "none",
+//             }}
+//           />
+//         );
+//       })}
+
+//       {/* ── OVERLAYS ─────────────────────────────────────────────────────── */}
+//       <div
+//         className="absolute inset-0 z-10"
+//         style={{
+//           background:
+//             "linear-gradient(to bottom, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.68) 100%)",
+//         }}
+//       />
+//       {/* Warm-gold luxury tint */}
+//       <div
+//         className="absolute inset-0 z-10"
+//         style={{
+//           background:
+//             "linear-gradient(135deg, rgba(120,53,15,0.18) 0%, transparent 60%)",
+//         }}
+//       />
+
+//       {/* ── CONTENT ──────────────────────────────────────────────────────── */}
+//       <div className="relative z-20 container mx-auto px-4 py-28 text-center flex flex-col items-center justify-center min-h-[100svh]">
+//         {/* Eyebrow pill */}
+//         <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-amber-400/40 bg-amber-400/10 backdrop-blur-sm">
+//           <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+//           <span className="text-amber-300 text-xs md:text-sm font-medium tracking-widest uppercase">
+//             Premium Properties · India
+//           </span>
+//         </div>
+
+//         {/* Main headline */}
+//         <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-5 drop-shadow-[0_2px_24px_rgba(0,0,0,0.8)]">
+//           Find Your Perfect{" "}
+//           <span className="relative inline-block">
+//             <span className="text-amber-300">Home</span>
+//             <span className="text-amber-300">Farmhouse & Plots</span>
+//             <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-amber-400/60 rounded-full" />
+//           </span>{" "}
+//           in Noida
+//         </h1>
+
+//         {/* Sub-tagline */}
+//         <p className="text-base md:text-xl text-gray-200 max-w-2xl mx-auto mb-3 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)]">
+//           Discover verified properties, trusted company, and the best real estate
+//           opportunities across Noida city.
+//         </p>
+
+//         {/* Category micro-copy */}
+//         <p className="text-sm text-amber-200/70 tracking-wide mb-10">
+//           Villas · Farmhouse · Houses · Plots
+//         </p>
+
+//         {/* CTA buttons */}
+//         <div className="flex justify-center gap-4 flex-wrap mb-14">
+//           <Link
+//             href="/properties"
+//             className="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-amber-50 hover:shadow-[0_0_24px_rgba(251,191,36,0.35)] transition-all duration-300 active:scale-95"
+//           >
+//             Browse Properties
+//           </Link>
+//           <Link
+//             href="/contact"
+//             className="border border-white/70 px-8 py-4 rounded-lg font-semibold backdrop-blur-sm bg-white/5 hover:bg-white hover:text-gray-900 hover:border-white transition-all duration-300 active:scale-95"
+//           >
+//             Contact Us
+//           </Link>
+//         </div>
+
+//         {/* Trust strip */}
+//         <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-gray-400 text-xs md:text-sm">
+//           {[
+//             { value: "4+", label: "Verified Listings" },
+//             { value: "2+", label: "Cities Covered" },
+//             { value: "100%", label: "Happy Clients" },
+//           ].map(({ value, label }) => (
+//             <div key={label} className="flex flex-col items-center gap-0.5">
+//               <span className="text-white font-semibold text-base md:text-lg">
+//                 {value}
+//               </span>
+//               <span>{label}</span>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+
+//       {/* ── SLIDE DOTS ───────────────────────────────────────────────────── */}
+//       {/* <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+//         {SLIDES.map((_, i) => (
+//           <button
+//             key={i}
+//             onClick={() => goTo(i)}
+//             aria-label={`Go to slide ${i + 1}`}
+//             className="rounded-full transition-all duration-300 focus:outline-none"
+//             style={{
+//               width: i === current ? "24px" : "8px",
+//               height: "8px",
+//               background: i === current ? "#fbbf24" : "rgba(255,255,255,0.4)",
+//             }}
+//           />
+//         ))}
+//       </div> */}
+
+//       {/* ── SCROLL INDICATOR ─────────────────────────────────────────────── */}
+//       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-white/40 text-xs tracking-widest">
+//          <span>SCROLL</span>
+//         {" "}
+//         <span className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent animate-pulse" />
+//         {" "}
+//       </div>
+//     </section>
+//   );
+// }
+
+
 "use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // ── SLIDESHOW IMAGES ───────────────────────────────────────────────────────
-// Replace these src paths with your actual property images.
-// Recommended: 1920×1080 or wider JPEGs/WebPs for best quality.
 const SLIDES = [
   {
     src: "/assets/images/farmhouse image2.jpeg",
@@ -15,24 +212,15 @@ const SLIDES = [
     src: "/assets/images/farmhouse image1.jpeg",
     alt: "Modern apartment skyline view",
   },
-  // {
-  //   src: "/assets/images/slide-3.jpg",
-  //   alt: "Premium commercial space",
-  // },
-  // {
-  //   src: "/assets/images/slide-4.jpg",
-  //   alt: "Elegant plot with garden",
-  // },
 ];
 
-const SLIDE_INTERVAL = 5000; // ms between transitions
+const SLIDE_INTERVAL = 5000;
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
   const [prev, setPrev] = useState(null);
   const [animating, setAnimating] = useState(false);
 
-  // Auto-advance
   useEffect(() => {
     const timer = setInterval(
       () => goTo((current + 1) % SLIDES.length),
@@ -49,7 +237,7 @@ export default function HeroSection() {
     setTimeout(() => {
       setPrev(null);
       setAnimating(false);
-    }, 900); // must match CSS transition duration
+    }, 900);
   }
 
   return (
@@ -67,7 +255,7 @@ export default function HeroSection() {
             src={slide.src}
             alt={slide.alt}
             draggable={false}
-            className="absolute inset-0 w-full h-full object-cover select-none"
+            className="absolute inset-0 w-full h-full object-cover object-center select-none"
             style={{
               zIndex: isActive ? 2 : isPrev ? 1 : 0,
               opacity: isActive ? 1 : 0,
@@ -91,106 +279,123 @@ export default function HeroSection() {
         className="absolute inset-0 z-10"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.68) 100%)",
+            "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.7) 100%)",
         }}
       />
-      {/* Warm-gold luxury tint */}
       <div
         className="absolute inset-0 z-10"
         style={{
           background:
-            "linear-gradient(135deg, rgba(120,53,15,0.18) 0%, transparent 60%)",
+            "linear-gradient(135deg, rgba(120,53,15,0.2) 0%, transparent 60%)",
         }}
       />
 
       {/* ── CONTENT ──────────────────────────────────────────────────────── */}
-      <div className="relative z-20 container mx-auto px-4 py-28 text-center flex flex-col items-center justify-center min-h-[100svh]">
+      <div className="relative z-20 mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center"
+        style={{
+          minHeight: "100svh",
+          paddingTop: "max(5rem, 12vh)",
+          paddingBottom: "max(4rem, 8vh)",
+          maxWidth: "80rem",
+        }}
+      >
         {/* Eyebrow pill */}
-        <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-amber-400/40 bg-amber-400/10 backdrop-blur-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-          <span className="text-amber-300 text-xs md:text-sm font-medium tracking-widest uppercase">
+        <div className="inline-flex items-center gap-2 mb-4 sm:mb-6 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-amber-400/40 bg-amber-400/10 backdrop-blur-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span className="text-amber-300 text-[10px] sm:text-xs md:text-sm font-medium tracking-widest uppercase">
             Premium Properties · India
           </span>
         </div>
 
         {/* Main headline */}
-        <h1 className="font-playfair text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-5 drop-shadow-[0_2px_24px_rgba(0,0,0,0.8)]">
-          Find Your Perfect{" "}
-          <span className="relative inline-block">
+        <h1 className="font-playfair font-bold leading-[1.1] sm:leading-[1.15] md:leading-tight mb-4 sm:mb-5 md:mb-6 drop-shadow-[0_2px_24px_rgba(0,0,0,0.8)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-5xl">
+          Find Your Perfect
+          <span className="relative block mt-1 sm:mt-2 md:mt-3">
             <span className="text-amber-300">Home</span>
-            <span className="text-amber-300">Farmhouse & Plots</span>
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-amber-400/60 rounded-full" />
-          </span>{" "}
-          in Noida
+            <span className="text-amber-300 mx-1.5 sm:mx-2 md:mx-3 hidden sm:inline">·</span>
+            <span className="text-amber-300">Farmhouse</span>
+            <span className="text-amber-300 mx-1.5 sm:mx-2 md:mx-3 hidden sm:inline">·</span>
+            <span className="text-amber-300">Plots</span>
+            <span className="absolute -bottom-0.5 sm:-bottom-1 left-0 w-full h-0.5 sm:h-[2px] bg-amber-400/50 rounded-full" />
+          </span>
+          <span className="block mt-1 sm:mt-2 md:mt-3 text-white/90">
+            in Noida
+          </span>
         </h1>
 
         {/* Sub-tagline */}
-        <p className="text-base md:text-xl text-gray-200 max-w-2xl mx-auto mb-3 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)]">
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200/90 max-w-xl sm:max-w-2xl mx-auto mb-2 sm:mb-3 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)] px-2 leading-relaxed sm:leading-normal">
           Discover verified properties, trusted company, and the best real estate
           opportunities across Noida city.
         </p>
 
         {/* Category micro-copy */}
-        <p className="text-sm text-amber-200/70 tracking-wide mb-10">
-          Villas · Farmhouse · Houses · Plots
+        <p className="text-xs sm:text-sm text-amber-200/60 tracking-wide mb-8 sm:mb-10 md:mb-14">
+          Villas · Farmhouses · Houses · Plots
         </p>
 
         {/* CTA buttons */}
-        <div className="flex justify-center gap-4 flex-wrap mb-14">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0 mb-10 sm:mb-12 md:mb-14">
           <Link
             href="/properties"
-            className="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-amber-50 hover:shadow-[0_0_24px_rgba(251,191,36,0.35)] transition-all duration-300 active:scale-95"
+            className="bg-white text-gray-900 px-8 py-3.5 sm:py-4 rounded-lg font-semibold text-sm sm:text-base text-center hover:bg-amber-50 hover:shadow-[0_0_24px_rgba(251,191,36,0.35)] transition-all duration-300 active:scale-[0.97] sm:max-w-none max-w-xs mx-auto sm:mx-0 w-full sm:w-auto"
           >
             Browse Properties
           </Link>
           <Link
             href="/contact"
-            className="border border-white/70 px-8 py-4 rounded-lg font-semibold backdrop-blur-sm bg-white/5 hover:bg-white hover:text-gray-900 hover:border-white transition-all duration-300 active:scale-95"
+            className="border border-white/70 px-8 py-3.5 sm:py-4 rounded-lg font-semibold text-sm sm:text-base text-center backdrop-blur-sm bg-white/5 hover:bg-white hover:text-gray-900 hover:border-white transition-all duration-300 active:scale-[0.97] sm:max-w-none max-w-xs mx-auto sm:mx-0 w-full sm:w-auto"
           >
             Contact Us
           </Link>
         </div>
 
         {/* Trust strip */}
-        <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-gray-400 text-xs md:text-sm">
+        <div className="flex flex-row justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-14 text-gray-400 text-xs sm:text-sm w-full max-w-md sm:max-w-none">
           {[
             { value: "4+", label: "Verified Listings" },
             { value: "2+", label: "Cities Covered" },
             { value: "100%", label: "Happy Clients" },
           ].map(({ value, label }) => (
-            <div key={label} className="flex flex-col items-center gap-0.5">
-              <span className="text-white font-semibold text-base md:text-lg">
+            <div
+              key={label}
+              className="flex flex-col items-center gap-0.5 flex-1 sm:flex-none"
+            >
+              <span className="text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl">
                 {value}
               </span>
-              <span>{label}</span>
+              <span className="leading-tight text-center">{label}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── SLIDE DOTS ───────────────────────────────────────────────────── */}
-      {/* <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30 flex gap-2">
-        {SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i)}
-            aria-label={`Go to slide ${i + 1}`}
-            className="rounded-full transition-all duration-300 focus:outline-none"
-            style={{
-              width: i === current ? "24px" : "8px",
-              height: "8px",
-              background: i === current ? "#fbbf24" : "rgba(255,255,255,0.4)",
-            }}
-          />
-        ))}
-      </div> */}
+      {SLIDES.length > 1 && (
+        <div className="absolute bottom-14 sm:bottom-16 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className="rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              style={{
+                width: i === current ? "24px" : "8px",
+                height: "8px",
+                background:
+                  i === current
+                    ? "#fbbf24"
+                    : "rgba(255,255,255,0.4)",
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* ── SCROLL INDICATOR ─────────────────────────────────────────────── */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-white/40 text-xs tracking-widest">
-         <span>SCROLL</span>
-        {" "}
-        <span className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent animate-pulse" />
-        {" "}
+      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-white/30 sm:text-white/40 text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-widest">
+        <span>SCROLL</span>
+        <span className="w-px h-6 sm:h-8 bg-gradient-to-b from-white/40 to-transparent animate-pulse" />
       </div>
     </section>
   );
