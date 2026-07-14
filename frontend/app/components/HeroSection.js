@@ -118,6 +118,7 @@ export default function HeroSection() {
           Find Your Perfect{" "}
           <span className="relative inline-block">
             <span className="text-amber-300">Home</span>
+            <span className="text-amber-300">Farmhouse & Plots</span>
             <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-amber-400/60 rounded-full" />
           </span>{" "}
           in Noida
@@ -125,13 +126,13 @@ export default function HeroSection() {
 
         {/* Sub-tagline */}
         <p className="text-base md:text-xl text-gray-200 max-w-2xl mx-auto mb-3 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)]">
-          Discover verified properties, trusted agents, and the best real estate
+          Discover verified properties, trusted company, and the best real estate
           opportunities across Noida city.
         </p>
 
         {/* Category micro-copy */}
         <p className="text-sm text-amber-200/70 tracking-wide mb-10">
-          Villas · Apartments · Commercial Spaces · Plots
+          Villas · Farmhouse · Houses · Plots
         </p>
 
         {/* CTA buttons */}
