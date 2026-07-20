@@ -28,7 +28,7 @@ export default function StatsSection() {
   const stats = [
     {
       label: 'Properties Listed',
-      value: '4+',
+      value: '10+',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round"

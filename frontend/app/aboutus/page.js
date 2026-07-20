@@ -310,7 +310,7 @@ const SERVICES = [
   { title: 'Residential Properties', icon: '🏠', desc: 'Premium apartments, villas, and independent houses tailored to your lifestyle.' },
   { title: 'Commercial Spaces',      icon: '🏢', desc: 'Strategic commercial investments and office spaces with strong ROI potential.' },
   { title: 'Plot & Land',            icon: '🌿', desc: 'Verified residential and agricultural plots in prime developing locations.' },
-  { title: 'Investment Advisory',    icon: '📈', desc: 'Data-driven property investment guidance for maximum long-term returns.' },
+  { title: 'Investment Company',    icon: '📈', desc: 'Data-driven property investment guidance for maximum long-term returns.' },
 ];
 
 export default function AboutPage() {
@@ -346,7 +346,7 @@ export default function AboutPage() {
         <section className="relative px-4 pb-12 pt-28 md:pb-20 md:pt-40">
           <div className="container mx-auto max-w-6xl">
             <p className="mb-5 text-xs tracking-[0.35em] uppercase" style={{ fontFamily: 'sans-serif', color: 'rgba(180,210,150,0.6)' }}>
-              Est. 2022 · Trusted Real Estate Advisors
+              Est. 2022 · Trusted Real Estate Company 
             </p>
             <div className="flex flex-col gap-6">
               <div>

@@ -353,7 +353,7 @@ export default function HeroSection() {
         {/* Trust strip */}
         <div className="flex flex-row justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-14 text-gray-400 text-xs sm:text-sm w-full max-w-md sm:max-w-none">
           {[
-            { value: "4+", label: "Verified Listings" },
+            { value: "10+", label: "Verified Listings" },
             { value: "2+", label: "Cities Covered" },
             { value: "100%", label: "Happy Clients" },
           ].map(({ value, label }) => (
